@@ -319,6 +319,12 @@ Le layout doit rester lisible et utilisable sur mobile et ordinateur :
 
 ## Phase 8 - Configuration Supabase cote React
 
+Fichier de reference :
+
+```text
+docset/supabase-client.md
+```
+
 Fichier :
 
 ```text
