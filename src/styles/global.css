@@ -196,6 +196,9 @@ select {
 }
 
 .nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   border-radius: 6px;
   color: var(--color-muted);
   font-size: 1rem;
@@ -211,6 +214,10 @@ select {
 .nav-link--active {
   background: var(--color-sky);
   color: var(--color-navy);
+}
+
+.nav-icon {
+  flex: 0 0 auto;
 }
 
 .main-content {
@@ -538,6 +545,27 @@ p {
   padding: 24px;
 }
 
+.auth-form {
+  display: grid;
+  max-width: 520px;
+  gap: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-white);
+  box-shadow: 0 10px 28px rgba(6, 26, 64, 0.06);
+  padding: 24px;
+}
+
+.auth-icon {
+  display: inline-grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--color-sky);
+  color: var(--color-navy);
+}
+
 .contact-form label {
   display: grid;
   gap: 8px;
@@ -545,8 +573,16 @@ p {
   font-weight: 800;
 }
 
+.auth-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--color-navy);
+  font-weight: 800;
+}
+
 .contact-form input,
-.contact-form textarea {
+.contact-form textarea,
+.auth-form input {
   width: 100%;
   border: 1px solid var(--color-border);
   border-radius: 6px;
@@ -610,6 +646,24 @@ p {
 
 .notice-panel p {
   margin: 0;
+}
+
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-white);
+  margin-bottom: 24px;
+  padding: 14px;
+}
+
+.admin-toolbar span {
+  color: var(--color-navy);
+  font-weight: 800;
+  overflow-wrap: anywhere;
 }
 
 .admin-actions span {
@@ -703,5 +757,14 @@ p {
 
   .contact-form {
     padding: 18px;
+  }
+
+  .auth-form {
+    padding: 18px;
+  }
+
+  .admin-toolbar {
+    align-items: stretch;
+    flex-direction: column;
   }
 }

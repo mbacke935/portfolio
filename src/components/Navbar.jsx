@@ -1,12 +1,47 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
+function LoginIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="nav-icon"
+      fill="none"
+      height="18"
+      viewBox="0 0 24 24"
+      width="18"
+    >
+      <path
+        d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+      <path
+        d="M10 17l5-5-5-5"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+      <path
+        d="M15 12H3"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
+
 const links = [
   { to: '/', label: 'Accueil' },
   { to: '/about', label: 'A propos' },
   { to: '/projects', label: 'Projets' },
   { to: '/contact', label: 'Contact' },
-  { to: '/admin', label: 'Admin' },
+  { to: '/admin', label: 'Admin', icon: <LoginIcon /> },
 ];
 
 export default function Navbar() {
@@ -65,6 +100,7 @@ export default function Navbar() {
                 to={link.to}
                 end={link.to === '/'}
               >
+                {link.icon}
                 {link.label}
               </NavLink>
             ))}

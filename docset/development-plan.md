@@ -444,6 +444,12 @@ Contraintes importantes :
 - Les regles RLS Supabase devront empecher les modifications non autorisees.
 - Les formulaires et tableaux admin devront etre utilisables sur mobile et ordinateur.
 
+Fichier de reference pour l'authentification :
+
+```text
+docset/admin-auth.md
+```
+
 ## Phase 12 - Projets dynamiques
 
 Fichier de reference :
