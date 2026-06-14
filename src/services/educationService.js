@@ -1,7 +1,7 @@
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabaseClient } from '../lib/supabaseClient.js';
 
 export async function getEducation() {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseClient()
     .from('education')
     .select(
       'id, institution, degree, start_date, end_date, description, display_order',

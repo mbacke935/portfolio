@@ -1,7 +1,7 @@
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabaseClient } from '../lib/supabaseClient.js';
 
 export async function getSkills() {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseClient()
     .from('skills')
     .select('id, name, category, level, icon, display_order')
     .order('category', { ascending: true })

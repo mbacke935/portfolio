@@ -15,9 +15,10 @@ src/lib/supabaseClient.js
 Ce fichier :
 
 - lit les variables d'environnement Vite ;
-- cree le client Supabase ;
+- cree le client Supabase si les variables sont presentes ;
 - exporte une instance `supabase` reutilisable ;
-- bloque clairement l'execution si les variables requises sont absentes.
+- expose `isSupabaseConfigured` pour connaitre l'etat de configuration ;
+- expose `getSupabaseClient()` pour bloquer clairement les appels de service si les variables requises sont absentes.
 
 ## Variables d'environnement
 
@@ -53,6 +54,6 @@ VITE_SUPABASE_ANON_KEY=
 
 - Le fichier `.env.example` contient les deux variables attendues.
 - `src/lib/supabaseClient.js` exporte `supabase`.
-- Le build echoue clairement si les variables manquent dans un code qui importe le client.
+- Les appels de service echouent clairement si les variables manquent.
 - Les pages ne dependent pas encore directement de Supabase.
 - Les prochaines integrations passeront par les services frontend.

@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabaseClient } from '../lib/supabaseClient.js';
 
 export async function submitContactMessage({ name, email, subject, message }) {
   const payload = {
@@ -8,7 +8,7 @@ export async function submitContactMessage({ name, email, subject, message }) {
     message: message?.trim(),
   };
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseClient()
     .from('contacts')
     .insert(payload)
     .select('id, created_at')

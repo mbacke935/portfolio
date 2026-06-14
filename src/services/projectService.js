@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabaseClient } from '../lib/supabaseClient.js';
 
 const projectSelect = `
   id,
@@ -25,7 +25,7 @@ function throwIfError(error) {
 }
 
 export async function getProjects() {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseClient()
     .from('projects')
     .select(projectSelect)
     .eq('status', 'published')
@@ -37,7 +37,7 @@ export async function getProjects() {
 }
 
 export async function getFeaturedProjects() {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseClient()
     .from('projects')
     .select(projectSelect)
     .eq('status', 'published')
@@ -50,7 +50,7 @@ export async function getFeaturedProjects() {
 }
 
 export async function getProjectBySlug(slug) {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseClient()
     .from('projects')
     .select(projectSelect)
     .eq('status', 'published')

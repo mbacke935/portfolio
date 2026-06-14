@@ -1,7 +1,7 @@
-import { supabase } from '../lib/supabaseClient.js';
+import { getSupabaseClient } from '../lib/supabaseClient.js';
 
 export async function getProfile() {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseClient()
     .from('profiles')
     .select(
       `

@@ -370,6 +370,12 @@ Responsabilites :
 
 ## Phase 10 - Integration dynamique
 
+Fichier de reference :
+
+```text
+docset/dynamic-integration.md
+```
+
 Objectif : connecter React a Supabase.
 
 Actions :
