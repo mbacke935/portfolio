@@ -24,7 +24,34 @@ const emptyProfile = {
   website_url: '',
 };
 
+const PROFILE_DRAFT_KEY = 'portfolio.admin.profileDraft';
+
 const adminSections = ['Projets', 'Competences', 'Education', 'Certifications', 'Messages'];
+
+function loadProfileDraft() {
+  try {
+    const draft = localStorage.getItem(PROFILE_DRAFT_KEY);
+    return draft ? JSON.parse(draft) : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function saveProfileDraft(profile) {
+  try {
+    localStorage.setItem(PROFILE_DRAFT_KEY, JSON.stringify(profile));
+  } catch (error) {
+    // Ignore storage failures so the admin form remains usable.
+  }
+}
+
+function clearProfileDraft() {
+  try {
+    localStorage.removeItem(PROFILE_DRAFT_KEY);
+  } catch (error) {
+    // Ignore storage failures so logout/save flows continue.
+  }
+}
 
 export default function Admin() {
   const [session, setSession] = useState(null);
@@ -87,8 +114,19 @@ export default function Admin() {
 
     getProfile()
       .then((currentProfile) => {
-        setProfile(currentProfile ?? emptyProfile);
-        setPhotoPreview(currentProfile?.avatar_url ?? '');
+        const profileFromDatabase = currentProfile ?? emptyProfile;
+        const draft = loadProfileDraft();
+        const nextProfile = draft ?? profileFromDatabase;
+
+        setProfile(nextProfile);
+        setPhotoPreview(nextProfile.avatar_url ?? '');
+
+        if (draft) {
+          setStatus({
+            type: 'success',
+            message: 'Brouillon local restaure. Enregistre pour le publier.',
+          });
+        }
       })
       .catch(() => {
         setStatus({
@@ -103,7 +141,11 @@ export default function Admin() {
 
   function updateProfileField(event) {
     const { name, value } = event.target;
-    setProfile((current) => ({ ...current, [name]: value }));
+    setProfile((current) => {
+      const nextProfile = { ...current, [name]: value };
+      saveProfileDraft(nextProfile);
+      return nextProfile;
+    });
   }
 
   function updateProfilePhoto(event) {
@@ -126,6 +168,11 @@ export default function Admin() {
       URL.revokeObjectURL(photoPreview);
     }
     setPhotoPreview(URL.createObjectURL(file));
+    setStatus({
+      type: 'success',
+      message:
+        "Photo selectionnee. Elle sera conservee seulement apres l'enregistrement.",
+    });
   }
 
   async function handleProfileSubmit(event) {
@@ -153,6 +200,7 @@ export default function Admin() {
       setProfile(savedProfile);
       setPhotoFile(null);
       setPhotoPreview(savedProfile.avatar_url ?? '');
+      clearProfileDraft();
       setStatus({
         type: 'success',
         message: 'Informations du hero enregistrees.',
@@ -196,6 +244,7 @@ export default function Admin() {
 
     try {
       await signOutAdmin();
+      clearProfileDraft();
       setSession(null);
       setStatus({ type: 'success', message: 'Deconnexion effectuee.' });
     } catch (error) {
@@ -348,7 +397,8 @@ export default function Admin() {
             <h2>Profil public</h2>
             <p>
               Ces champs alimentent la photo, le nom complet, le titre et la
-              courte presentation de la page d'accueil.
+              courte presentation de la page d'accueil. Les textes saisis sont
+              conserves localement tant qu'ils ne sont pas enregistres.
             </p>
           </div>
           {isProfileLoading && <p className="status-note">Chargement...</p>}
