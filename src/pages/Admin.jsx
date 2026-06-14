@@ -64,6 +64,29 @@ const emptyCertification = {
   display_order: 0,
 };
 
+const skillCategories = [
+  'Langages de programmation',
+  'Frontend',
+  'Backend',
+  'Base de donnees',
+  'Reseaux',
+  'Securite informatique',
+  'Systemes Linux',
+  'DevOps',
+  'Intelligence artificielle',
+];
+
+function groupSkillsByCategory(skills) {
+  return skills.reduce((groups, skill) => {
+    const category = skill.category || 'Autres competences';
+
+    return {
+      ...groups,
+      [category]: [...(groups[category] ?? []), skill],
+    };
+  }, {});
+}
+
 function loadProfileDraft() {
   try {
     const draft = localStorage.getItem(PROFILE_DRAFT_KEY);
@@ -109,6 +132,7 @@ export default function Admin() {
   const [certificationForm, setCertificationForm] = useState(emptyCertification);
   const [isContentLoading, setIsContentLoading] = useState(false);
   const [isContentSaving, setIsContentSaving] = useState(false);
+  const groupedSkills = groupSkillsByCategory(skills);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -792,13 +816,19 @@ export default function Admin() {
           <label>
             Categorie
             <input
+              list="skill-categories"
               name="category"
               onChange={updateSkillField}
-              placeholder="Frontend"
+              placeholder="Langages de programmation"
               required
               type="text"
               value={skillForm.category}
             />
+            <datalist id="skill-categories">
+              {skillCategories.map((category) => (
+                <option key={category} value={category} />
+              ))}
+            </datalist>
           </label>
 
           <label>
@@ -839,30 +869,37 @@ export default function Admin() {
         </div>
 
         <div className="admin-list">
-          {skills.map((skill) => (
-            <article className="admin-list-item" key={skill.id}>
-              <div>
-                <strong>{skill.name}</strong>
-                <span>{skill.category}</span>
+          {Object.entries(groupedSkills).map(([category, categorySkills]) => (
+            <section className="admin-list-group" key={category}>
+              <h3>{category}</h3>
+              <div className="admin-list">
+                {categorySkills.map((skill) => (
+                  <article className="admin-list-item" key={skill.id}>
+                    <div>
+                      <strong>{skill.name}</strong>
+                      <span>{skill.icon || 'Competence'}</span>
+                    </div>
+                    <div className="admin-actions">
+                      <button
+                        className="button button--secondary"
+                        onClick={() => setSkillForm({ ...emptySkill, ...skill })}
+                        type="button"
+                      >
+                        Modifier
+                      </button>
+                      <button
+                        className="button button--secondary"
+                        disabled={isContentSaving}
+                        onClick={() => handleSkillDelete(skill.id)}
+                        type="button"
+                      >
+                        Supprimer
+                      </button>
+                    </div>
+                  </article>
+                ))}
               </div>
-              <div className="admin-actions">
-                <button
-                  className="button button--secondary"
-                  onClick={() => setSkillForm({ ...emptySkill, ...skill })}
-                  type="button"
-                >
-                  Modifier
-                </button>
-                <button
-                  className="button button--secondary"
-                  disabled={isContentSaving}
-                  onClick={() => handleSkillDelete(skill.id)}
-                  type="button"
-                >
-                  Supprimer
-                </button>
-              </div>
-            </article>
+            </section>
           ))}
         </div>
       </form>

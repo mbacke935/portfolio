@@ -508,8 +508,28 @@ p {
   color: #8fd3ff;
 }
 
+.skill-category-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.skill-category-panel {
+  border: 1px solid rgba(223, 241, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 22px;
+}
+
+.skill-category-panel h3 {
+  margin: 0 0 16px;
+  color: #8fd3ff;
+  font-size: 1rem;
+}
+
 .about-skills-grid {
-  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .about-skill-card {
@@ -820,6 +840,17 @@ p {
   gap: 12px;
 }
 
+.admin-list-group {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-list-group h3 {
+  margin: 0;
+  color: var(--color-navy);
+  font-size: 1rem;
+}
+
 .admin-list-item {
   display: flex;
   align-items: center;
@@ -938,6 +969,7 @@ p {
   }
 
   .info-grid,
+  .about-skills-grid,
   .project-grid,
   .admin-grid,
   .form-grid,
