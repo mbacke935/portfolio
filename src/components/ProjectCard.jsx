@@ -13,7 +13,9 @@ export default function ProjectCard({ project }) {
             : undefined
         }
         aria-hidden="true"
-      />
+      >
+        <span>{project.title}</span>
+      </div>
       <div className="project-card__body">
         <h2>{project.title}</h2>
         <p>{description}</p>

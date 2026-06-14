@@ -4,6 +4,12 @@ import { useAsyncData } from '../hooks/useAsyncData.js';
 import { isSupabaseConfigured } from '../lib/supabaseClient.js';
 import { getProfile } from '../services/profileService.js';
 
+const highlights = [
+  { value: 'React', label: 'Frontend moderne' },
+  { value: 'Supabase', label: 'Donnees dynamiques' },
+  { value: 'IA + Cyber', label: 'Positionnement technique' },
+];
+
 export default function Home() {
   const { data: profile, error, isLoading } = useAsyncData(getProfile, []);
   const activeProfile = profile ?? fallbackProfile;
@@ -28,6 +34,15 @@ export default function Home() {
           <Link className="button button--secondary" to="/contact">
             Me contacter
           </Link>
+        </div>
+
+        <div className="hero-highlights" aria-label="Points forts">
+          {highlights.map((item) => (
+            <div className="highlight-item" key={item.value}>
+              <strong>{item.value}</strong>
+              <span>{item.label}</span>
+            </div>
+          ))}
         </div>
       </div>
     </section>

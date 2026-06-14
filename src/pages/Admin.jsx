@@ -19,6 +19,14 @@ export default function Admin() {
         </p>
       </div>
 
+      <div className="notice-panel" role="status">
+        <strong>Acces admin en preparation</strong>
+        <p>
+          Cette interface restera limitee tant que l'authentification admin et
+          les policies d'ecriture Supabase ne sont pas activees.
+        </p>
+      </div>
+
       <div className="admin-grid">
         {adminSections.map((section) => (
           <article className="admin-panel" key={section}>

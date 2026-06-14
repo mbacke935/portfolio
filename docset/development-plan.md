@@ -389,6 +389,12 @@ Actions :
 
 ## Phase 11 - UI / UX
 
+Fichier de reference :
+
+```text
+docset/ui-ux.md
+```
+
 Elements a construire :
 
 - Navbar responsive
