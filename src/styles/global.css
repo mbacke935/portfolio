@@ -362,6 +362,19 @@ p {
   padding: 16px;
 }
 
+.highlight-item--link {
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.highlight-item--link:hover {
+  border-color: rgba(31, 122, 224, 0.45);
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-3px);
+}
+
 .highlight-item strong,
 .highlight-item span {
   display: block;

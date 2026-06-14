@@ -5,6 +5,7 @@ import MainLayout from '../layouts/MainLayout.jsx';
 const About = lazy(() => import('../pages/About.jsx'));
 const Admin = lazy(() => import('../pages/Admin.jsx'));
 const Contact = lazy(() => import('../pages/Contact.jsx'));
+const Credentials = lazy(() => import('../pages/Credentials.jsx'));
 const Home = lazy(() => import('../pages/Home.jsx'));
 const NotFound = lazy(() => import('../pages/NotFound.jsx'));
 const ProjectDetails = lazy(() => import('../pages/ProjectDetails.jsx'));
@@ -27,6 +28,7 @@ export default function AppRoutes() {
           <Route path="/about" element={<About />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:slug" element={<ProjectDetails />} />
+          <Route path="/credentials" element={<Credentials />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />

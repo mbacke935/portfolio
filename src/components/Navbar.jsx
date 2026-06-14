@@ -40,6 +40,7 @@ const links = [
   { to: '/', label: 'Accueil' },
   { to: '/about', label: 'A propos' },
   { to: '/projects', label: 'Projets' },
+  { to: '/credentials', label: 'Diplomes' },
   { to: '/contact', label: 'Contact' },
   { to: '/admin', label: 'Admin', icon: <LoginIcon /> },
 ];
