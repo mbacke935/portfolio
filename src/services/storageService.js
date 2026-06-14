@@ -18,6 +18,12 @@ export async function uploadProfilePhoto(file, userId) {
     });
 
   if (error) {
+    if (error.message?.toLowerCase().includes('bucket not found')) {
+      throw new Error(
+        `Le bucket Storage "${PROFILE_BUCKET}" est introuvable. Execute docset/admin-storage.sql dans Supabase SQL Editor.`,
+      );
+    }
+
     throw error;
   }
 
