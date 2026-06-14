@@ -8,7 +8,7 @@ import {
 } from '../services/authService.js';
 
 const adminSections = [
-  'Profil',
+  'Profil hero',
   'Projets',
   'Competences',
   'Education',
@@ -238,7 +238,11 @@ export default function Admin() {
         {adminSections.map((section) => (
           <article className="admin-panel" key={section}>
             <h2>{section}</h2>
-            <p>Gestion en preparation pour la phase Supabase.</p>
+            <p>
+              {section === 'Profil hero'
+                ? 'Photo professionnelle, nom complet, titre et courte presentation.'
+                : 'Gestion en preparation pour la phase Supabase.'}
+            </p>
             <div className="admin-actions" aria-label={`Actions ${section}`}>
               <span>Ajouter</span>
               <span>Modifier</span>

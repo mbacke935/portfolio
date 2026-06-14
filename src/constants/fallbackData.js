@@ -1,9 +1,10 @@
 export const fallbackProfile = {
-  name: 'Portfolio',
-  title: 'Developpement, cybersecurite et intelligence artificielle',
-  bio: 'Une base React + Supabase preparee pour presenter des projets, competences, certifications et experiences de maniere dynamique.',
+  name: 'Nom complet',
+  title: 'Titre professionnel',
+  bio: 'Courte presentation professionnelle a renseigner depuis l espace admin.',
   email: 'contact@example.com',
   location: 'Dakar',
+  avatar_url: '',
 };
 
 export const fallbackProjects = [

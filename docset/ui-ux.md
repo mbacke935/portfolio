@@ -15,6 +15,7 @@ Renforcer la presentation visuelle et l'experience utilisateur du portfolio avan
 ## Ameliorations realisees
 
 - Accueil plus structure avec points forts.
+- Hero d'accueil base sur les donnees admin : photo professionnelle, nom complet, titre professionnel et courte presentation.
 - Cartes projets plus stables visuellement.
 - Page admin avec avertissement d'etat.
 - Focus clavier plus visible.

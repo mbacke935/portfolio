@@ -51,3 +51,16 @@ Dans Supabase :
 Cette protection masque l'interface admin aux visiteurs non connectes.
 
 Les operations d'ecriture devront toujours etre protegees par RLS cote Supabase. L'interface React ne doit pas etre la seule barriere de securite.
+
+## Donnees du hero d'accueil
+
+Le hero d'accueil consomme la table `profiles`.
+
+Champs utilises :
+
+- `avatar_url` : photo professionnelle.
+- `name` : nom complet.
+- `title` : titre professionnel.
+- `bio` : courte presentation.
+
+L'espace admin devra permettre de modifier ces champs lors de la phase de gestion effective.
