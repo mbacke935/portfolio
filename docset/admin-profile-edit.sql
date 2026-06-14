@@ -1,25 +1,37 @@
--- Autoriser un utilisateur authentifie a gerer le profil public.
+-- Autoriser l'admin authentifie a gerer le profil public.
 -- A executer dans Supabase SQL Editor.
--- Hypothese actuelle: seuls les comptes admin existent dans Supabase Auth.
+-- Remplace l'email si le compte admin change.
+
+alter table public.profiles enable row level security;
+
+drop policy if exists "Public can read profiles" on public.profiles;
+create policy "Public can read profiles"
+on public.profiles
+for select
+to anon, authenticated
+using (true);
 
 drop policy if exists "Authenticated can insert profiles" on public.profiles;
-create policy "Authenticated can insert profiles"
+drop policy if exists "Admin can insert profiles" on public.profiles;
+create policy "Admin can insert profiles"
 on public.profiles
 for insert
 to authenticated
-with check (true);
+with check ((auth.jwt() ->> 'email') = 'mbackem500@gmail.com');
 
 drop policy if exists "Authenticated can update profiles" on public.profiles;
-create policy "Authenticated can update profiles"
+drop policy if exists "Admin can update profiles" on public.profiles;
+create policy "Admin can update profiles"
 on public.profiles
 for update
 to authenticated
-using (true)
-with check (true);
+using ((auth.jwt() ->> 'email') = 'mbackem500@gmail.com')
+with check ((auth.jwt() ->> 'email') = 'mbackem500@gmail.com');
 
 drop policy if exists "Authenticated can delete profiles" on public.profiles;
-create policy "Authenticated can delete profiles"
+drop policy if exists "Admin can delete profiles" on public.profiles;
+create policy "Admin can delete profiles"
 on public.profiles
 for delete
 to authenticated
-using (true);
+using ((auth.jwt() ->> 'email') = 'mbackem500@gmail.com');
