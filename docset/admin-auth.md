@@ -64,3 +64,25 @@ Champs utilises :
 - `bio` : courte presentation.
 
 L'espace admin devra permettre de modifier ces champs lors de la phase de gestion effective.
+
+## Edition du profil hero
+
+La page `/admin` permet maintenant de modifier :
+
+- nom complet ;
+- titre professionnel ;
+- courte presentation ;
+- URL de photo professionnelle ;
+- localisation ;
+- email ;
+- telephone ;
+- GitHub ;
+- LinkedIn.
+
+Pour que l'enregistrement fonctionne, executer dans Supabase SQL Editor :
+
+```text
+docset/admin-profile-edit.sql
+```
+
+Ce script autorise les utilisateurs authentifies a inserer, modifier et supprimer le profil public.

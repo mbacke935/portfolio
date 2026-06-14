@@ -6,15 +6,24 @@ import {
   signInAdmin,
   signOutAdmin,
 } from '../services/authService.js';
+import { getProfile, saveProfile } from '../services/profileService.js';
 
-const adminSections = [
-  'Profil hero',
-  'Projets',
-  'Competences',
-  'Education',
-  'Certifications',
-  'Messages',
-];
+const emptyProfile = {
+  id: null,
+  name: '',
+  title: '',
+  bio: '',
+  email: '',
+  phone: '',
+  location: '',
+  avatar_url: '',
+  cv_url: '',
+  github_url: '',
+  linkedin_url: '',
+  website_url: '',
+};
+
+const adminSections = ['Projets', 'Competences', 'Education', 'Certifications', 'Messages'];
 
 export default function Admin() {
   const [session, setSession] = useState(null);
@@ -22,6 +31,9 @@ export default function Admin() {
   const [status, setStatus] = useState({ type: 'idle', message: '' });
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [profile, setProfile] = useState(emptyProfile);
+  const [isProfileLoading, setIsProfileLoading] = useState(false);
+  const [isProfileSaving, setIsProfileSaving] = useState(false);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -61,6 +73,65 @@ export default function Admin() {
   function updateCredential(event) {
     const { name, value } = event.target;
     setCredentials((current) => ({ ...current, [name]: value }));
+  }
+
+  useEffect(() => {
+    if (!session) {
+      return;
+    }
+
+    setIsProfileLoading(true);
+
+    getProfile()
+      .then((currentProfile) => {
+        setProfile(currentProfile ?? emptyProfile);
+      })
+      .catch(() => {
+        setStatus({
+          type: 'error',
+          message: "Impossible de charger les informations du hero.",
+        });
+      })
+      .finally(() => {
+        setIsProfileLoading(false);
+      });
+  }, [session]);
+
+  function updateProfileField(event) {
+    const { name, value } = event.target;
+    setProfile((current) => ({ ...current, [name]: value }));
+  }
+
+  async function handleProfileSubmit(event) {
+    event.preventDefault();
+    setStatus({ type: 'idle', message: '' });
+
+    if (profile.name.trim().length < 2 || profile.title.trim().length < 2) {
+      setStatus({
+        type: 'error',
+        message: 'Le nom complet et le titre professionnel sont obligatoires.',
+      });
+      return;
+    }
+
+    setIsProfileSaving(true);
+
+    try {
+      const savedProfile = await saveProfile(profile);
+      setProfile(savedProfile);
+      setStatus({
+        type: 'success',
+        message: 'Informations du hero enregistrees.',
+      });
+    } catch (error) {
+      setStatus({
+        type: 'error',
+        message:
+          "Enregistrement impossible. Verifie les policies RLS admin sur la table profiles.",
+      });
+    } finally {
+      setIsProfileSaving(false);
+    }
   }
 
   async function handleLogin(event) {
@@ -233,6 +304,127 @@ export default function Admin() {
           Se deconnecter
         </button>
       </div>
+
+      <form className="admin-form" onSubmit={handleProfileSubmit}>
+        <div className="admin-form__heading">
+          <div>
+            <p className="eyebrow">Hero accueil</p>
+            <h2>Profil public</h2>
+            <p>
+              Ces champs alimentent la photo, le nom complet, le titre et la
+              courte presentation de la page d'accueil.
+            </p>
+          </div>
+          {isProfileLoading && <p className="status-note">Chargement...</p>}
+        </div>
+
+        <div className="form-grid">
+          <label>
+            Nom complet
+            <input
+              name="name"
+              onChange={updateProfileField}
+              placeholder="Votre nom complet"
+              required
+              type="text"
+              value={profile.name ?? ''}
+            />
+          </label>
+
+          <label>
+            Titre professionnel
+            <input
+              name="title"
+              onChange={updateProfileField}
+              placeholder="Ex: Developpeur full-stack"
+              required
+              type="text"
+              value={profile.title ?? ''}
+            />
+          </label>
+
+          <label className="form-grid__full">
+            Courte presentation
+            <textarea
+              name="bio"
+              onChange={updateProfileField}
+              placeholder="Quelques lignes pour presenter votre profil."
+              rows="4"
+              value={profile.bio ?? ''}
+            />
+          </label>
+
+          <label>
+            URL photo professionnelle
+            <input
+              name="avatar_url"
+              onChange={updateProfileField}
+              placeholder="https://..."
+              type="url"
+              value={profile.avatar_url ?? ''}
+            />
+          </label>
+
+          <label>
+            Localisation
+            <input
+              name="location"
+              onChange={updateProfileField}
+              placeholder="Dakar"
+              type="text"
+              value={profile.location ?? ''}
+            />
+          </label>
+
+          <label>
+            Email public
+            <input
+              name="email"
+              onChange={updateProfileField}
+              placeholder="contact@email.com"
+              type="email"
+              value={profile.email ?? ''}
+            />
+          </label>
+
+          <label>
+            Telephone
+            <input
+              name="phone"
+              onChange={updateProfileField}
+              placeholder="+221..."
+              type="tel"
+              value={profile.phone ?? ''}
+            />
+          </label>
+
+          <label>
+            GitHub
+            <input
+              name="github_url"
+              onChange={updateProfileField}
+              placeholder="https://github.com/..."
+              type="url"
+              value={profile.github_url ?? ''}
+            />
+          </label>
+
+          <label>
+            LinkedIn
+            <input
+              name="linkedin_url"
+              onChange={updateProfileField}
+              placeholder="https://linkedin.com/in/..."
+              type="url"
+              value={profile.linkedin_url ?? ''}
+            />
+          </label>
+        </div>
+
+        <button className="button button--primary" disabled={isProfileSaving} type="submit">
+          {isProfileSaving ? 'Enregistrement...' : 'Enregistrer le hero'}
+        </button>
+      </form>
 
       <div className="admin-grid">
         {adminSections.map((section) => (
