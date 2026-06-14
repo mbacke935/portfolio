@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { isSupabaseConfigured } from '../lib/supabaseClient.js';
 import {
   getCurrentSession,
@@ -90,6 +90,7 @@ function clearProfileDraft() {
 }
 
 export default function Admin() {
+  const skillNameInputRef = useRef(null);
   const [session, setSession] = useState(null);
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [status, setStatus] = useState({ type: 'idle', message: '' });
@@ -327,7 +328,11 @@ export default function Admin() {
       await saveSkill(skillForm);
       setSkillForm(emptySkill);
       await loadAdminContent();
-      setStatus({ type: 'success', message: 'Competence enregistree.' });
+      skillNameInputRef.current?.focus();
+      setStatus({
+        type: 'success',
+        message: 'Competence enregistree. Tu peux en ajouter une autre.',
+      });
     } catch (error) {
       setStatus({
         type: 'error',
@@ -777,6 +782,7 @@ export default function Admin() {
               name="name"
               onChange={updateSkillField}
               placeholder="React"
+              ref={skillNameInputRef}
               required
               type="text"
               value={skillForm.name}
