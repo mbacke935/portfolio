@@ -513,6 +513,12 @@ Actions :
 
 ## Phase 15 - Deploiement
 
+Fichier de reference :
+
+```text
+docset/deployment.md
+```
+
 Frontend :
 
 - GitHub
