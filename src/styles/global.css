@@ -472,8 +472,19 @@ p {
   padding: 12px 14px;
 }
 
+.contact-form input[aria-invalid="true"],
+.contact-form textarea[aria-invalid="true"] {
+  border-color: #c92525;
+}
+
 .contact-form textarea {
   resize: vertical;
+}
+
+.field-error {
+  color: #9f1d1d;
+  font-size: 0.86rem;
+  font-weight: 700;
 }
 
 .form-status {

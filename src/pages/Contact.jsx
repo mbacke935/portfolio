@@ -7,8 +7,8 @@ export default function Contact() {
         <p className="eyebrow">Contact</p>
         <h1>Discutons d'un projet</h1>
         <p>
-          Le formulaire sera connecte a la table `contacts` pendant la phase
-          Supabase. Pour l'instant, il valide uniquement la structure visuelle.
+          Envoie un message professionnel. Il sera transmis a Supabase lorsque
+          les variables d'environnement et les regles RLS seront configurees.
         </p>
       </div>
 
