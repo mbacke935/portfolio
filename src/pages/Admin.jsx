@@ -160,8 +160,10 @@ export default function Admin() {
     } catch (error) {
       setStatus({
         type: 'error',
-        message:
-          "Enregistrement impossible. Verifie les policies RLS et Storage pour l'admin.",
+        message: `Enregistrement impossible : ${
+          error.message ??
+          "verifie les policies RLS et Storage pour l'admin."
+        }`,
       });
     } finally {
       setIsProfileSaving(false);
