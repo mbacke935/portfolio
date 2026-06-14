@@ -54,6 +54,24 @@ select {
   flex-direction: column;
 }
 
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: 12px;
+  z-index: 20;
+  border-radius: 6px;
+  background: var(--color-navy);
+  color: var(--color-white);
+  font-weight: 800;
+  padding: 10px 12px;
+  transform: translateY(-160%);
+  transition: transform 160ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 .site-header {
   position: sticky;
   top: 0;

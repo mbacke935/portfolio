@@ -289,6 +289,12 @@ Les routes doivent etre testees sur mobile et ordinateur, notamment les pages lo
 
 ## Phase 7 - Layout global
 
+Fichier de reference :
+
+```text
+docset/main-layout.md
+```
+
 Composant :
 
 ```text
