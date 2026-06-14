@@ -495,6 +495,12 @@ Donnees envoyees :
 
 ## Phase 14 - Optimisation
 
+Fichier de reference :
+
+```text
+docset/optimization.md
+```
+
 Actions :
 
 - Ajouter les meta tags essentiels
