@@ -24,13 +24,13 @@ Pages principales :
 - Projets
 - Detail projet
 - Contact
+- Admin
 
 Pages optionnelles futures :
 
 - Education
 - Certifications
 - Blog technique
-- Dashboard admin
 
 Fonctions principales :
 
@@ -40,6 +40,14 @@ Fonctions principales :
 - Consulter le detail d'un projet via une URL dediee
 - Envoyer un message de contact vers Supabase
 - Ajouter un projet sans modifier le code
+- Gerer les informations depuis une page admin : ajouter, modifier et supprimer les donnees du portfolio
+
+Preferences visuelles validees :
+
+- Couleur principale : bleu-fonce
+- Couleur secondaire : bleu-clair
+- Couleur de base : blanc
+- Animations simples dans les pages, utiles a la navigation et a la comprehension
 
 ## Phase 2 - Initialisation du projet
 
@@ -72,6 +80,7 @@ src/
   lib/
     supabaseClient.js
   pages/
+    Admin.jsx
     About.jsx
     Contact.jsx
     Home.jsx
@@ -227,6 +236,7 @@ Routes principales :
 /projects
 /projects/:slug
 /contact
+/admin
 ```
 
 Routes optionnelles futures :
@@ -316,6 +326,7 @@ Elements a construire :
 - Cards projets
 - Page detail projet
 - Formulaire de contact
+- Page admin de gestion des informations
 - Sections competences
 - Sections education et certifications si necessaire
 
@@ -325,6 +336,36 @@ Contraintes :
 - Interface sobre et professionnelle
 - Lisibilite prioritaire
 - Animations simples et utiles
+- Palette basee sur bleu-fonce, bleu-clair et blanc
+
+## Phase 11.1 - Page admin
+
+Objectif :
+
+Permettre de gerer les informations du portfolio depuis une interface dediee.
+
+Route :
+
+```text
+/admin
+```
+
+Fonctionnalites attendues :
+
+- Ajouter des informations
+- Modifier des informations
+- Supprimer des informations
+- Gerer les projets
+- Gerer le profil
+- Gerer les competences
+- Gerer l'education
+- Gerer les certifications
+
+Contraintes importantes :
+
+- La page admin devra etre protegee avant le deploiement public.
+- Les operations d'ecriture passeront par des services dedies.
+- Les regles RLS Supabase devront empecher les modifications non autorisees.
 
 ## Phase 12 - Projets dynamiques
 
