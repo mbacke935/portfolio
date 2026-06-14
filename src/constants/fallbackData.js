@@ -14,6 +14,9 @@ export const fallbackProjects = [
     full_description:
       'Cette fiche projet sera remplacee par les donnees publiees dans Supabase.',
     technologies: ['React', 'Supabase', 'Vite'],
+    github_url: 'https://github.com',
+    demo_url: 'https://example.com',
+    gallery: [],
   },
   {
     title: 'Cyber Lab',
@@ -22,6 +25,7 @@ export const fallbackProjects = [
     full_description:
       'Projet de demonstration pour valider la page detail et les technologies.',
     technologies: ['Reseaux', 'Securite', 'Linux'],
+    gallery: [],
   },
   {
     title: 'AI Toolkit',
@@ -30,6 +34,7 @@ export const fallbackProjects = [
     full_description:
       'Projet de demonstration pour les futures experimentations IA.',
     technologies: ['IA', 'Python', 'API'],
+    gallery: [],
   },
 ];
 

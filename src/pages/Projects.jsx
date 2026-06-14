@@ -31,6 +31,16 @@ export default function Projects() {
           <ProjectCard key={project.slug} project={project} />
         ))}
       </div>
+
+      {projects.length === 0 && (
+        <div className="empty-state">
+          <h2>Aucun projet publie</h2>
+          <p>
+            Ajoute un projet avec le statut `published` dans Supabase pour le
+            voir apparaitre ici automatiquement.
+          </p>
+        </div>
+      )}
     </section>
   );
 }

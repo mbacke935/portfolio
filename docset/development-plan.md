@@ -446,6 +446,12 @@ Contraintes importantes :
 
 ## Phase 12 - Projets dynamiques
 
+Fichier de reference :
+
+```text
+docset/dynamic-projects.md
+```
+
 Objectif central :
 
 Ajouter un projet depuis Supabase et le voir apparaitre automatiquement dans React.
