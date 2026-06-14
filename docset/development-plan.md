@@ -6,6 +6,19 @@ Construire un portfolio professionnel, dynamique et evolutif avec React, Vite, S
 
 Le portfolio doit permettre d'ajouter ou modifier des projets depuis Supabase sans modifier le code React.
 
+## Exigence transversale - Responsivite
+
+La responsivite mobile et ordinateur doit etre prise en compte a chaque phase du projet.
+
+Pour chaque nouvelle page, composant, layout, formulaire ou fonctionnalite :
+
+- Verifier l'affichage sur mobile.
+- Verifier l'affichage sur ordinateur.
+- Eviter les debordements horizontaux.
+- Garder les textes lisibles sur petits et grands ecrans.
+- Adapter les grilles, formulaires, menus et cards selon la largeur d'ecran.
+- Tester les routes principales dans les deux formats avant de valider la phase.
+
 ## Stack technique
 
 - Frontend : React + Vite
@@ -64,6 +77,7 @@ Actions :
   - `react-router-dom`
   - `@supabase/supabase-js`
 - Verifier que le serveur de developpement fonctionne
+- Verifier que la page de base s'affiche correctement sur mobile et ordinateur
 
 ## Phase 3 - Architecture cible
 
@@ -104,6 +118,8 @@ src/
 Principe important :
 
 Aucun composant React ne doit appeler Supabase directement. Les appels base de donnees passent par les fichiers dans `src/services/`.
+
+Chaque layout et chaque page doivent etre concus mobile-first, puis adaptes aux ecrans ordinateur.
 
 ## Phase 4 - Schema Supabase
 
@@ -248,6 +264,8 @@ Routes optionnelles futures :
 
 Toutes les pages doivent utiliser le layout global `MainLayout`.
 
+Les routes doivent etre testees sur mobile et ordinateur, notamment les pages longues et les pages avec grilles.
+
 ## Phase 7 - Layout global
 
 Composant :
@@ -265,6 +283,12 @@ Footer
 ```
 
 Le layout centralise la structure commune de toutes les pages.
+
+Le layout doit rester lisible et utilisable sur mobile et ordinateur :
+
+- Navbar responsive
+- Contenu sans debordement horizontal
+- Footer adapte aux petits ecrans
 
 ## Phase 8 - Configuration Supabase cote React
 
@@ -316,6 +340,7 @@ Actions :
 - Charger les projets depuis `projects`
 - Charger les competences depuis `skills`
 - Envoyer les messages de contact vers `contacts`
+- Verifier les etats chargement, succes et erreur sur mobile et ordinateur
 
 ## Phase 11 - UI / UX
 
@@ -366,6 +391,7 @@ Contraintes importantes :
 - La page admin devra etre protegee avant le deploiement public.
 - Les operations d'ecriture passeront par des services dedies.
 - Les regles RLS Supabase devront empecher les modifications non autorisees.
+- Les formulaires et tableaux admin devront etre utilisables sur mobile et ordinateur.
 
 ## Phase 12 - Projets dynamiques
 
@@ -379,6 +405,7 @@ Fonctionnement :
 - Renseigner `slug`, descriptions, images, technologies et liens
 - React recupere les donnees via `projectService.js`
 - La page `/projects/:slug` affiche le detail automatiquement
+- La liste et la page detail doivent rester responsives sur mobile et ordinateur
 
 Exemple d'URL :
 
@@ -394,6 +421,7 @@ Fonctionnalites :
 - Validation basique
 - Envoi vers la table `contacts`
 - Message de succes ou d'erreur
+- Formulaire utilisable confortablement sur mobile et ordinateur
 
 Donnees envoyees :
 
@@ -412,6 +440,7 @@ Actions :
 - Mettre en place le lazy loading si necessaire
 - Verifier les performances React
 - Verifier l'accessibilite de base
+- Verifier les performances et l'affichage sur mobile et ordinateur
 
 ## Phase 15 - Deploiement
 
@@ -432,6 +461,7 @@ Etapes :
 - Ajouter les variables d'environnement dans Vercel
 - Deployer automatiquement
 - Verifier les routes et les appels Supabase en production
+- Verifier le rendu final en production sur mobile et ordinateur
 
 ## Phase 16 - Evolutions futures
 
