@@ -342,6 +342,12 @@ La cle `anon` peut etre exposee cote frontend, mais les politiques RLS doivent p
 
 ## Phase 9 - Services frontend
 
+Fichier de reference :
+
+```text
+docset/frontend-services.md
+```
+
 Fichiers :
 
 ```text
