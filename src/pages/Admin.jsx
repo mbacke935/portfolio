@@ -6,7 +6,18 @@ import {
   signInAdmin,
   signOutAdmin,
 } from '../services/authService.js';
+import {
+  deleteCertification,
+  getCertifications,
+  saveCertification,
+} from '../services/certificationService.js';
+import {
+  deleteEducation,
+  getEducation,
+  saveEducation,
+} from '../services/educationService.js';
 import { getProfile, saveProfile } from '../services/profileService.js';
+import { deleteSkill, getSkills, saveSkill } from '../services/skillService.js';
 import { uploadProfilePhoto } from '../services/storageService.js';
 
 const emptyProfile = {
@@ -26,7 +37,32 @@ const emptyProfile = {
 
 const PROFILE_DRAFT_KEY = 'portfolio.admin.profileDraft';
 
-const adminSections = ['Projets', 'Competences', 'Education', 'Certifications', 'Messages'];
+const emptySkill = {
+  id: null,
+  name: '',
+  category: '',
+  icon: '',
+  display_order: 0,
+};
+
+const emptyEducation = {
+  id: null,
+  institution: '',
+  degree: '',
+  start_date: '',
+  end_date: '',
+  description: '',
+  display_order: 0,
+};
+
+const emptyCertification = {
+  id: null,
+  title: '',
+  issuer: '',
+  issue_date: '',
+  credential_url: '',
+  display_order: 0,
+};
 
 function loadProfileDraft() {
   try {
@@ -64,6 +100,14 @@ export default function Admin() {
   const [photoPreview, setPhotoPreview] = useState('');
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [isProfileSaving, setIsProfileSaving] = useState(false);
+  const [skills, setSkills] = useState([]);
+  const [skillForm, setSkillForm] = useState(emptySkill);
+  const [education, setEducation] = useState([]);
+  const [educationForm, setEducationForm] = useState(emptyEducation);
+  const [certifications, setCertifications] = useState([]);
+  const [certificationForm, setCertificationForm] = useState(emptyCertification);
+  const [isContentLoading, setIsContentLoading] = useState(false);
+  const [isContentSaving, setIsContentSaving] = useState(false);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -137,6 +181,38 @@ export default function Admin() {
       .finally(() => {
         setIsProfileLoading(false);
       });
+  }, [session]);
+
+  async function loadAdminContent() {
+    setIsContentLoading(true);
+
+    try {
+      const [nextSkills, nextEducation, nextCertifications] = await Promise.all([
+        getSkills(),
+        getEducation(),
+        getCertifications(),
+      ]);
+
+      setSkills(nextSkills);
+      setEducation(nextEducation);
+      setCertifications(nextCertifications);
+    } catch (error) {
+      setStatus({
+        type: 'error',
+        message:
+          "Impossible de charger les competences, diplomes ou certificats.",
+      });
+    } finally {
+      setIsContentLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!session) {
+      return;
+    }
+
+    loadAdminContent();
   }, [session]);
 
   function updateProfileField(event) {
@@ -215,6 +291,165 @@ export default function Admin() {
       });
     } finally {
       setIsProfileSaving(false);
+    }
+  }
+
+  function updateSkillField(event) {
+    const { name, value } = event.target;
+    setSkillForm((current) => ({ ...current, [name]: value }));
+  }
+
+  function updateEducationField(event) {
+    const { name, value } = event.target;
+    setEducationForm((current) => ({ ...current, [name]: value }));
+  }
+
+  function updateCertificationField(event) {
+    const { name, value } = event.target;
+    setCertificationForm((current) => ({ ...current, [name]: value }));
+  }
+
+  async function handleSkillSubmit(event) {
+    event.preventDefault();
+    setStatus({ type: 'idle', message: '' });
+
+    if (skillForm.name.trim().length < 2 || skillForm.category.trim().length < 2) {
+      setStatus({
+        type: 'error',
+        message: 'Le nom et la categorie de la competence sont obligatoires.',
+      });
+      return;
+    }
+
+    setIsContentSaving(true);
+
+    try {
+      await saveSkill(skillForm);
+      setSkillForm(emptySkill);
+      await loadAdminContent();
+      setStatus({ type: 'success', message: 'Competence enregistree.' });
+    } catch (error) {
+      setStatus({
+        type: 'error',
+        message: `Competence non enregistree : ${error.message ?? 'verifie les policies RLS.'}`,
+      });
+    } finally {
+      setIsContentSaving(false);
+    }
+  }
+
+  async function handleSkillDelete(id) {
+    setIsContentSaving(true);
+
+    try {
+      await deleteSkill(id);
+      await loadAdminContent();
+      setStatus({ type: 'success', message: 'Competence supprimee.' });
+    } catch (error) {
+      setStatus({
+        type: 'error',
+        message: `Suppression impossible : ${error.message ?? 'verifie les policies RLS.'}`,
+      });
+    } finally {
+      setIsContentSaving(false);
+    }
+  }
+
+  async function handleEducationSubmit(event) {
+    event.preventDefault();
+    setStatus({ type: 'idle', message: '' });
+
+    if (
+      educationForm.degree.trim().length < 2 ||
+      educationForm.institution.trim().length < 2
+    ) {
+      setStatus({
+        type: 'error',
+        message: "Le diplome et l'etablissement sont obligatoires.",
+      });
+      return;
+    }
+
+    setIsContentSaving(true);
+
+    try {
+      await saveEducation(educationForm);
+      setEducationForm(emptyEducation);
+      await loadAdminContent();
+      setStatus({ type: 'success', message: 'Diplome enregistre.' });
+    } catch (error) {
+      setStatus({
+        type: 'error',
+        message: `Diplome non enregistre : ${error.message ?? 'verifie les policies RLS.'}`,
+      });
+    } finally {
+      setIsContentSaving(false);
+    }
+  }
+
+  async function handleEducationDelete(id) {
+    setIsContentSaving(true);
+
+    try {
+      await deleteEducation(id);
+      await loadAdminContent();
+      setStatus({ type: 'success', message: 'Diplome supprime.' });
+    } catch (error) {
+      setStatus({
+        type: 'error',
+        message: `Suppression impossible : ${error.message ?? 'verifie les policies RLS.'}`,
+      });
+    } finally {
+      setIsContentSaving(false);
+    }
+  }
+
+  async function handleCertificationSubmit(event) {
+    event.preventDefault();
+    setStatus({ type: 'idle', message: '' });
+
+    if (
+      certificationForm.title.trim().length < 2 ||
+      certificationForm.issuer.trim().length < 2
+    ) {
+      setStatus({
+        type: 'error',
+        message: "Le titre et l'organisme sont obligatoires.",
+      });
+      return;
+    }
+
+    setIsContentSaving(true);
+
+    try {
+      await saveCertification(certificationForm);
+      setCertificationForm(emptyCertification);
+      await loadAdminContent();
+      setStatus({ type: 'success', message: 'Certificat enregistre.' });
+    } catch (error) {
+      setStatus({
+        type: 'error',
+        message: `Certificat non enregistre : ${error.message ?? 'verifie les policies RLS.'}`,
+      });
+    } finally {
+      setIsContentSaving(false);
+    }
+  }
+
+  async function handleCertificationDelete(id) {
+    setIsContentSaving(true);
+
+    try {
+      await deleteCertification(id);
+      await loadAdminContent();
+      setStatus({ type: 'success', message: 'Certificat supprime.' });
+    } catch (error) {
+      setStatus({
+        type: 'error',
+        message: `Suppression impossible : ${error.message ?? 'verifie les policies RLS.'}`,
+      });
+    } finally {
+      setIsContentSaving(false);
     }
   }
 
@@ -372,8 +607,8 @@ export default function Admin() {
       <div className="notice-panel" role="status">
         <strong>Session admin active</strong>
         <p>
-          L'interface est protegee par Supabase Auth. Les operations d'ecriture
-          restent a connecter aux services admin.
+          L'interface est protegee par Supabase Auth. Les competences, diplomes
+          et certificats sont maintenant geres depuis cette page.
         </p>
       </div>
 
@@ -521,23 +756,347 @@ export default function Admin() {
         </button>
       </form>
 
-      <div className="admin-grid">
-        {adminSections.map((section) => (
-          <article className="admin-panel" key={section}>
-            <h2>{section}</h2>
+      <form className="admin-form" onSubmit={handleSkillSubmit}>
+        <div className="admin-form__heading">
+          <div>
+            <p className="eyebrow">A propos</p>
+            <h2>Competences</h2>
             <p>
-              {section === 'Profil hero'
-                ? 'Photo professionnelle, nom complet, titre et courte presentation.'
-                : 'Gestion en preparation pour la phase Supabase.'}
+              Ces competences alimentent la page A propos et le bloc
+              Competences de l'accueil. Aucun niveau en pourcentage n'est
+              affiche.
             </p>
-            <div className="admin-actions" aria-label={`Actions ${section}`}>
-              <span>Ajouter</span>
-              <span>Modifier</span>
-              <span>Supprimer</span>
-            </div>
-          </article>
-        ))}
-      </div>
+          </div>
+          {isContentLoading && <p className="status-note">Chargement...</p>}
+        </div>
+
+        <div className="form-grid">
+          <label>
+            Nom
+            <input
+              name="name"
+              onChange={updateSkillField}
+              placeholder="React"
+              required
+              type="text"
+              value={skillForm.name}
+            />
+          </label>
+
+          <label>
+            Categorie
+            <input
+              name="category"
+              onChange={updateSkillField}
+              placeholder="Frontend"
+              required
+              type="text"
+              value={skillForm.category}
+            />
+          </label>
+
+          <label>
+            Icone
+            <input
+              name="icon"
+              onChange={updateSkillField}
+              placeholder="Optionnel"
+              type="text"
+              value={skillForm.icon ?? ''}
+            />
+          </label>
+
+          <label>
+            Ordre
+            <input
+              name="display_order"
+              onChange={updateSkillField}
+              type="number"
+              value={skillForm.display_order}
+            />
+          </label>
+        </div>
+
+        <div className="admin-actions">
+          <button className="button button--primary" disabled={isContentSaving} type="submit">
+            {skillForm.id ? 'Modifier la competence' : 'Ajouter la competence'}
+          </button>
+          {skillForm.id && (
+            <button
+              className="button button--secondary"
+              onClick={() => setSkillForm(emptySkill)}
+              type="button"
+            >
+              Annuler
+            </button>
+          )}
+        </div>
+
+        <div className="admin-list">
+          {skills.map((skill) => (
+            <article className="admin-list-item" key={skill.id}>
+              <div>
+                <strong>{skill.name}</strong>
+                <span>{skill.category}</span>
+              </div>
+              <div className="admin-actions">
+                <button
+                  className="button button--secondary"
+                  onClick={() => setSkillForm({ ...emptySkill, ...skill })}
+                  type="button"
+                >
+                  Modifier
+                </button>
+                <button
+                  className="button button--secondary"
+                  disabled={isContentSaving}
+                  onClick={() => handleSkillDelete(skill.id)}
+                  type="button"
+                >
+                  Supprimer
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </form>
+
+      <form className="admin-form" onSubmit={handleEducationSubmit}>
+        <div className="admin-form__heading">
+          <div>
+            <p className="eyebrow">Diplomes</p>
+            <h2>Education</h2>
+            <p>
+              Ces informations alimentent la page Diplomes & Certificats.
+            </p>
+          </div>
+        </div>
+
+        <div className="form-grid">
+          <label>
+            Diplome
+            <input
+              name="degree"
+              onChange={updateEducationField}
+              placeholder="Licence, Master..."
+              required
+              type="text"
+              value={educationForm.degree}
+            />
+          </label>
+
+          <label>
+            Etablissement
+            <input
+              name="institution"
+              onChange={updateEducationField}
+              placeholder="Universite..."
+              required
+              type="text"
+              value={educationForm.institution}
+            />
+          </label>
+
+          <label>
+            Date debut
+            <input
+              name="start_date"
+              onChange={updateEducationField}
+              type="date"
+              value={educationForm.start_date ?? ''}
+            />
+          </label>
+
+          <label>
+            Date fin
+            <input
+              name="end_date"
+              onChange={updateEducationField}
+              type="date"
+              value={educationForm.end_date ?? ''}
+            />
+          </label>
+
+          <label>
+            Ordre
+            <input
+              name="display_order"
+              onChange={updateEducationField}
+              type="number"
+              value={educationForm.display_order}
+            />
+          </label>
+
+          <label className="form-grid__full">
+            Description
+            <textarea
+              name="description"
+              onChange={updateEducationField}
+              placeholder="Description courte du parcours."
+              rows="3"
+              value={educationForm.description ?? ''}
+            />
+          </label>
+        </div>
+
+        <div className="admin-actions">
+          <button className="button button--primary" disabled={isContentSaving} type="submit">
+            {educationForm.id ? 'Modifier le diplome' : 'Ajouter le diplome'}
+          </button>
+          {educationForm.id && (
+            <button
+              className="button button--secondary"
+              onClick={() => setEducationForm(emptyEducation)}
+              type="button"
+            >
+              Annuler
+            </button>
+          )}
+        </div>
+
+        <div className="admin-list">
+          {education.map((item) => (
+            <article className="admin-list-item" key={item.id}>
+              <div>
+                <strong>{item.degree}</strong>
+                <span>{item.institution}</span>
+              </div>
+              <div className="admin-actions">
+                <button
+                  className="button button--secondary"
+                  onClick={() => setEducationForm({ ...emptyEducation, ...item })}
+                  type="button"
+                >
+                  Modifier
+                </button>
+                <button
+                  className="button button--secondary"
+                  disabled={isContentSaving}
+                  onClick={() => handleEducationDelete(item.id)}
+                  type="button"
+                >
+                  Supprimer
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </form>
+
+      <form className="admin-form" onSubmit={handleCertificationSubmit}>
+        <div className="admin-form__heading">
+          <div>
+            <p className="eyebrow">Certificats</p>
+            <h2>Certifications</h2>
+            <p>
+              Ces certificats restent affiches uniquement dans la page Diplomes
+              & Certificats.
+            </p>
+          </div>
+        </div>
+
+        <div className="form-grid">
+          <label>
+            Titre
+            <input
+              name="title"
+              onChange={updateCertificationField}
+              placeholder="Nom du certificat"
+              required
+              type="text"
+              value={certificationForm.title}
+            />
+          </label>
+
+          <label>
+            Organisme
+            <input
+              name="issuer"
+              onChange={updateCertificationField}
+              placeholder="Cisco, Google..."
+              required
+              type="text"
+              value={certificationForm.issuer}
+            />
+          </label>
+
+          <label>
+            Date obtention
+            <input
+              name="issue_date"
+              onChange={updateCertificationField}
+              type="date"
+              value={certificationForm.issue_date ?? ''}
+            />
+          </label>
+
+          <label>
+            Ordre
+            <input
+              name="display_order"
+              onChange={updateCertificationField}
+              type="number"
+              value={certificationForm.display_order}
+            />
+          </label>
+
+          <label className="form-grid__full">
+            Lien certificat
+            <input
+              name="credential_url"
+              onChange={updateCertificationField}
+              placeholder="https://..."
+              type="url"
+              value={certificationForm.credential_url ?? ''}
+            />
+          </label>
+        </div>
+
+        <div className="admin-actions">
+          <button className="button button--primary" disabled={isContentSaving} type="submit">
+            {certificationForm.id ? 'Modifier le certificat' : 'Ajouter le certificat'}
+          </button>
+          {certificationForm.id && (
+            <button
+              className="button button--secondary"
+              onClick={() => setCertificationForm(emptyCertification)}
+              type="button"
+            >
+              Annuler
+            </button>
+          )}
+        </div>
+
+        <div className="admin-list">
+          {certifications.map((item) => (
+            <article className="admin-list-item" key={item.id}>
+              <div>
+                <strong>{item.title}</strong>
+                <span>{item.issuer}</span>
+              </div>
+              <div className="admin-actions">
+                <button
+                  className="button button--secondary"
+                  onClick={() =>
+                    setCertificationForm({ ...emptyCertification, ...item })
+                  }
+                  type="button"
+                >
+                  Modifier
+                </button>
+                <button
+                  className="button button--secondary"
+                  disabled={isContentSaving}
+                  onClick={() => handleCertificationDelete(item.id)}
+                  type="button"
+                >
+                  Supprimer
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </form>
     </section>
   );
 }

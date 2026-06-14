@@ -487,6 +487,45 @@ p {
   padding: 22px;
 }
 
+.about-page {
+  width: 100%;
+  min-height: calc(100vh - 132px);
+  background:
+    linear-gradient(180deg, rgba(31, 122, 224, 0.18), rgba(6, 26, 64, 0)),
+    var(--color-navy);
+  margin: 0;
+  padding: 72px max(16px, calc((100% - 1120px) / 2));
+}
+
+.about-heading h1,
+.about-heading h2,
+.about-heading p {
+  color: var(--color-white);
+}
+
+.about-heading .eyebrow,
+.about-heading .status-note {
+  color: #8fd3ff;
+}
+
+.about-skills-grid {
+  margin-top: 18px;
+}
+
+.about-skill-card {
+  border-color: rgba(223, 241, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+.about-skill-card h2 {
+  color: var(--color-white);
+}
+
+.about-skill-card p {
+  color: #c8e7ff;
+}
+
 .project-card {
   display: flex;
   flex-direction: column;
@@ -776,6 +815,36 @@ p {
   margin-top: 18px;
 }
 
+.admin-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: rgba(223, 241, 255, 0.28);
+  padding: 14px;
+}
+
+.admin-list-item strong,
+.admin-list-item span {
+  display: block;
+}
+
+.admin-list-item strong {
+  color: var(--color-navy);
+}
+
+.admin-list-item span {
+  color: var(--color-muted);
+  font-size: 0.92rem;
+}
+
 .notice-panel {
   border: 1px solid var(--color-border);
   border-left: 4px solid var(--color-blue);
@@ -882,6 +951,11 @@ p {
   .hero-section {
     min-height: auto;
     padding: 56px 0;
+  }
+
+  .admin-list-item {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .hero-photo {

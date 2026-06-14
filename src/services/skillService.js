@@ -14,3 +14,32 @@ export async function getSkills() {
 
   return data ?? [];
 }
+
+export async function saveSkill(skill) {
+  const payload = {
+    name: skill.name.trim(),
+    category: skill.category.trim(),
+    icon: skill.icon?.trim() || null,
+    display_order: Number(skill.display_order) || 0,
+  };
+
+  const { data, error } = await getSupabaseClient()
+    .from('skills')
+    .upsert(skill.id ? { ...payload, id: skill.id } : payload)
+    .select('id, name, category, level, icon, display_order')
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function deleteSkill(id) {
+  const { error } = await getSupabaseClient().from('skills').delete().eq('id', id);
+
+  if (error) {
+    throw error;
+  }
+}
