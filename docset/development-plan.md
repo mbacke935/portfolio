@@ -233,6 +233,12 @@ Champs :
 
 ## Phase 5 - Regles RLS Supabase
 
+Fichier de reference :
+
+```text
+docset/supabase-rls.md
+```
+
 Activer RLS sur toutes les tables.
 
 Regles recommandees :
