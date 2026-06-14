@@ -7,6 +7,7 @@ import {
   signOutAdmin,
 } from '../services/authService.js';
 import { getProfile, saveProfile } from '../services/profileService.js';
+import { uploadProfilePhoto } from '../services/storageService.js';
 
 const emptyProfile = {
   id: null,
@@ -32,6 +33,8 @@ export default function Admin() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [profile, setProfile] = useState(emptyProfile);
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState('');
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [isProfileSaving, setIsProfileSaving] = useState(false);
 
@@ -85,6 +88,7 @@ export default function Admin() {
     getProfile()
       .then((currentProfile) => {
         setProfile(currentProfile ?? emptyProfile);
+        setPhotoPreview(currentProfile?.avatar_url ?? '');
       })
       .catch(() => {
         setStatus({
@@ -102,6 +106,28 @@ export default function Admin() {
     setProfile((current) => ({ ...current, [name]: value }));
   }
 
+  function updateProfilePhoto(event) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setStatus({
+        type: 'error',
+        message: 'Choisis un fichier image pour la photo professionnelle.',
+      });
+      return;
+    }
+
+    setPhotoFile(file);
+    if (photoPreview?.startsWith('blob:')) {
+      URL.revokeObjectURL(photoPreview);
+    }
+    setPhotoPreview(URL.createObjectURL(file));
+  }
+
   async function handleProfileSubmit(event) {
     event.preventDefault();
     setStatus({ type: 'idle', message: '' });
@@ -117,8 +143,16 @@ export default function Admin() {
     setIsProfileSaving(true);
 
     try {
-      const savedProfile = await saveProfile(profile);
+      let avatarUrl = profile.avatar_url;
+
+      if (photoFile) {
+        avatarUrl = await uploadProfilePhoto(photoFile, session.user.id);
+      }
+
+      const savedProfile = await saveProfile({ ...profile, avatar_url: avatarUrl });
       setProfile(savedProfile);
+      setPhotoFile(null);
+      setPhotoPreview(savedProfile.avatar_url ?? '');
       setStatus({
         type: 'success',
         message: 'Informations du hero enregistrees.',
@@ -127,7 +161,7 @@ export default function Admin() {
       setStatus({
         type: 'error',
         message:
-          "Enregistrement impossible. Verifie les policies RLS admin sur la table profiles.",
+          "Enregistrement impossible. Verifie les policies RLS et Storage pour l'admin.",
       });
     } finally {
       setIsProfileSaving(false);
@@ -354,16 +388,25 @@ export default function Admin() {
             />
           </label>
 
-          <label>
-            URL photo professionnelle
-            <input
-              name="avatar_url"
-              onChange={updateProfileField}
-              placeholder="https://..."
-              type="url"
-              value={profile.avatar_url ?? ''}
-            />
-          </label>
+          <div className="form-grid__full photo-upload-field">
+            <div className="photo-preview" aria-label="Apercu photo professionnelle">
+              {photoPreview ? (
+                <img src={photoPreview} alt="" />
+              ) : (
+                <span>Photo</span>
+              )}
+            </div>
+
+            <label>
+              Photo professionnelle locale
+              <input
+                accept="image/*"
+                name="avatar_file"
+                onChange={updateProfilePhoto}
+                type="file"
+              />
+            </label>
+          </div>
 
           <label>
             Localisation

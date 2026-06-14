@@ -73,6 +73,7 @@ La page `/admin` permet maintenant de modifier :
 - titre professionnel ;
 - courte presentation ;
 - URL de photo professionnelle ;
+- upload d'une photo locale vers Supabase Storage ;
 - localisation ;
 - email ;
 - telephone ;
@@ -86,3 +87,11 @@ docset/admin-profile-edit.sql
 ```
 
 Ce script autorise les utilisateurs authentifies a inserer, modifier et supprimer le profil public.
+
+Pour utiliser des photos locales, executer aussi :
+
+```text
+docset/admin-storage.sql
+```
+
+Ce script cree le bucket public `profile-assets` et autorise l'upload pour les utilisateurs authentifies.

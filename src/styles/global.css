@@ -632,6 +632,32 @@ p {
   grid-column: 1 / -1;
 }
 
+.photo-upload-field {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+}
+
+.photo-preview {
+  display: grid;
+  width: 120px;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-sky);
+  color: var(--color-navy);
+  font-weight: 900;
+  overflow: hidden;
+}
+
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .auth-icon {
   display: inline-grid;
   width: 56px;
@@ -863,5 +889,9 @@ p {
   .admin-toolbar {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .photo-upload-field {
+    grid-template-columns: 1fr;
   }
 }
