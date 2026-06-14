@@ -123,6 +123,14 @@ Chaque layout et chaque page doivent etre concus mobile-first, puis adaptes aux 
 
 ## Phase 4 - Schema Supabase
 
+Fichier de reference :
+
+```text
+docset/supabase-schema.sql
+```
+
+Ce fichier contient la creation des tables, les contraintes, les index, les triggers `updated_at` et les regles RLS initiales.
+
 ### Table `profiles`
 
 Champs :
