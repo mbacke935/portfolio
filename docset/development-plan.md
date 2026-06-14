@@ -258,6 +258,12 @@ Regles recommandees :
 
 ## Phase 6 - Routes React
 
+Fichier de reference :
+
+```text
+docset/react-routes.md
+```
+
 Routes principales :
 
 ```text
@@ -267,6 +273,7 @@ Routes principales :
 /projects/:slug
 /contact
 /admin
+*
 ```
 
 Routes optionnelles futures :
