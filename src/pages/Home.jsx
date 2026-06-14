@@ -16,6 +16,32 @@ function formatCount(count, singular, plural) {
   return `${count} ${count > 1 ? plural : singular}`;
 }
 
+function buildHomeSections({ educationCount, projectsCount, skillsCount }) {
+  return [
+    {
+      title: 'Competences',
+      count: formatCount(skillsCount, 'competence publiee', 'competences publiees'),
+      description:
+        'Technologies, outils et domaines techniques que je developpe dans mon parcours.',
+      to: '/about',
+    },
+    {
+      title: 'Projets',
+      count: formatCount(projectsCount, 'projet disponible', 'projets disponibles'),
+      description:
+        'Realisations pratiques en developpement, cybersecurite et intelligence artificielle.',
+      to: '/projects',
+    },
+    {
+      title: 'Diplomes & Certificats',
+      count: formatCount(educationCount, 'diplome renseigne', 'diplomes renseignes'),
+      description:
+        'Formations, diplomes et certifications qui structurent mon profil professionnel.',
+      to: '/credentials',
+    },
+  ];
+}
+
 export default function Home() {
   const { data: profile, error, isLoading } = useAsyncData(getProfile, []);
   const skillsState = useAsyncData(getSkills, []);
@@ -28,6 +54,11 @@ export default function Home() {
   const education = educationState.data?.length
     ? educationState.data
     : fallbackEducation;
+  const homeSections = buildHomeSections({
+    educationCount: education.length,
+    projectsCount: projects.length,
+    skillsCount: skills.length,
+  });
 
   return (
     <section className="hero-section">
@@ -67,24 +98,21 @@ export default function Home() {
                 Me contacter
               </Link>
             </div>
-
-            <div className="hero-highlights" aria-label="Sections principales">
-              <Link className="highlight-item highlight-item--link" to="/about">
-                <strong>Competences</strong>
-                <span>{formatCount(skills.length, 'competence publiee', 'competences publiees')}</span>
-              </Link>
-
-              <Link className="highlight-item highlight-item--link" to="/projects">
-                <strong>Projets</strong>
-                <span>{formatCount(projects.length, 'projet disponible', 'projets disponibles')}</span>
-              </Link>
-
-              <Link className="highlight-item highlight-item--link" to="/credentials">
-                <strong>Diplomes & Certificats</strong>
-                <span>{formatCount(education.length, 'diplome renseigne', 'diplomes renseignes')}</span>
-              </Link>
-            </div>
           </div>
+        </div>
+
+        <div className="hero-highlights" aria-label="Sections principales">
+          {homeSections.map((section) => (
+            <Link
+              className="highlight-item highlight-item--link"
+              key={section.to}
+              to={section.to}
+            >
+              <strong>{section.title}</strong>
+              <span className="highlight-item__count">{section.count}</span>
+              <span>{section.description}</span>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
