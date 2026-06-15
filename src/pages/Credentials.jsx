@@ -45,14 +45,13 @@ export default function Credentials() {
           <p className="eyebrow">Parcours</p>
           <h1>Diplomes & Certificats</h1>
           <p>
-            Diplomes, formations et certifications geres depuis l'espace admin
-            et publies automatiquement sur le portfolio.
+            Liste des diplomes et certificats obtenus, ainsi que des formations
+            suivies.
           </p>
         </div>
         {hasFallback && (
           <p className="status-note">
-            Mode demonstration : les donnees reelles apparaitront apres
-            configuration de Supabase.
+            Les données seront bientôt disponibles.
           </p>
         )}
       </div>
