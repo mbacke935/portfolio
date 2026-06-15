@@ -44,11 +44,14 @@ function parseProjectDescription(value) {
 
 export default function ProjectDetails() {
   const { slug } = useParams();
+  const normalizedSlug = decodeURIComponent(slug ?? '').toLowerCase();
   const { data, error, isLoading } = useAsyncData(
     () => getProjectBySlug(slug),
     [slug],
   );
-  const fallbackProject = fallbackProjects.find((project) => project.slug === slug);
+  const fallbackProject = fallbackProjects.find(
+    (project) => project.slug.toLowerCase() === normalizedSlug,
+  );
   const project = data ?? fallbackProject;
   const gallery = project?.gallery ?? [];
   const projectDetails = parseProjectDescription(project?.full_description);

@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 
-export default function ProjectCard({ project }) {
+export default function ProjectCard({ project, showDescription = true }) {
   const description = project.short_description ?? project.description;
+  const projectPath = `/projects/${encodeURIComponent(project.slug)}`;
 
   return (
     <article className="project-card">
@@ -18,7 +19,7 @@ export default function ProjectCard({ project }) {
       </div>
       <div className="project-card__body">
         <h2>{project.title}</h2>
-        <p>{description}</p>
+        {showDescription && <p>{description}</p>}
         {project.technologies?.length > 0 && (
           <div className="tag-list">
             {project.technologies.slice(0, 4).map((technology) => (
@@ -26,7 +27,7 @@ export default function ProjectCard({ project }) {
             ))}
           </div>
         )}
-        <Link className="text-link" to={`/projects/${project.slug}`}>
+        <Link className="text-link" to={projectPath}>
           Voir le detail
         </Link>
       </div>

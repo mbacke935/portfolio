@@ -36,7 +36,7 @@ export default function Projects() {
             }
             key={project.slug}
           >
-            <ProjectCard project={project} />
+            <ProjectCard project={project} showDescription={false} />
             <div className="project-summary-panel">
               <p className="eyebrow">Resume projet</p>
               <h2>{project.title}</h2>

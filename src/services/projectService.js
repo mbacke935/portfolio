@@ -24,6 +24,10 @@ function throwIfError(error) {
   }
 }
 
+function normalizeSlug(slug) {
+  return decodeURIComponent(String(slug ?? '')).trim();
+}
+
 export async function getProjects() {
   const { data, error } = await getSupabaseClient()
     .from('projects')
@@ -61,11 +65,12 @@ export async function getFeaturedProjects() {
 }
 
 export async function getProjectBySlug(slug) {
+  const normalizedSlug = normalizeSlug(slug);
   const { data, error } = await getSupabaseClient()
     .from('projects')
     .select(projectSelect)
     .eq('status', 'published')
-    .eq('slug', slug)
+    .ilike('slug', normalizedSlug)
     .maybeSingle();
 
   throwIfError(error);
@@ -75,7 +80,7 @@ export async function getProjectBySlug(slug) {
 export async function saveProject(project) {
   const payload = {
     title: project.title.trim(),
-    slug: project.slug.trim(),
+    slug: normalizeSlug(project.slug),
     short_description: project.short_description.trim(),
     full_description: project.full_description?.trim() || null,
     technologies: Array.isArray(project.technologies)
