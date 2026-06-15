@@ -27,13 +27,12 @@ export default function About() {
   return (
     <section className="page-section about-page">
       <div className="section-heading about-heading">
-        <p className="eyebrow">A propos</p>
+        <p className="eyebrow">Compétences</p>
         <h1>{profile.name}</h1>
         <p>{profile.bio}</p>
         {hasFallback && (
           <p className="status-note">
-            Mode demonstration : les donnees reelles apparaitront apres
-            configuration de Supabase.
+            Les données seront bientôt disponibles.
           </p>
         )}
       </div>
@@ -42,8 +41,7 @@ export default function About() {
         <p className="eyebrow">Competences</p>
         <h2>Domaines techniques</h2>
         <p>
-          Cette liste est alimentee depuis l'espace admin et peut evoluer avec
-          les nouvelles competences.
+          Voici un aperçu de mes compétences techniques, regroupées par domaine.
         </p>
       </div>
 
