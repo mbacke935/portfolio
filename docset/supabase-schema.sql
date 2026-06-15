@@ -27,6 +27,7 @@ create table if not exists public.profiles (
   github_url text,
   linkedin_url text,
   website_url text,
+  social_links jsonb not null default '[]'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

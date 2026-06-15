@@ -21,6 +21,9 @@ function normalizePhoneHref(phone) {
 export default function Footer() {
   const { data: profile } = useAsyncData(getProfile, []);
   const activeProfile = profile ?? fallbackProfile;
+  const socialLinks = Array.isArray(activeProfile.social_links)
+    ? activeProfile.social_links
+    : [];
 
   return (
     <footer className="site-footer">
@@ -41,6 +44,13 @@ export default function Footer() {
         <FooterLink href={activeProfile.github_url} label="GitHub" />
         <FooterLink href={activeProfile.linkedin_url} label="LinkedIn" />
         <FooterLink href={activeProfile.website_url} label="Site web" />
+        {socialLinks.map((link) => (
+          <FooterLink
+            href={link.url}
+            key={`${link.label}-${link.url}`}
+            label={link.label}
+          />
+        ))}
         <FooterLink href={activeProfile.cv_url} label="CV" />
       </div>
     </footer>

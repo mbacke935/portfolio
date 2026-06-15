@@ -74,6 +74,9 @@ function groupSkillsByCategory(skills) {
 
 function buildCvHtml({ certifications, education, profile, projects, skills }) {
   const skillGroups = groupSkillsByCategory(skills);
+  const socialLinks = Array.isArray(profile.social_links)
+    ? profile.social_links.map((link) => `${link.label}: ${link.url}`)
+    : [];
   const contactItems = [
     profile.email,
     profile.phone,
@@ -81,6 +84,7 @@ function buildCvHtml({ certifications, education, profile, projects, skills }) {
     profile.github_url,
     profile.linkedin_url,
     profile.website_url,
+    ...socialLinks,
   ].filter(Boolean);
 
   return `<!doctype html>

@@ -42,6 +42,7 @@ const emptyProfile = {
   github_url: '',
   linkedin_url: '',
   website_url: '',
+  social_links: '',
 };
 
 const PROFILE_DRAFT_KEY = 'portfolio.admin.profileDraft';
@@ -126,6 +127,24 @@ function slugify(value) {
     .trim()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
+}
+
+function formatSocialLinksForAdmin(links) {
+  if (!Array.isArray(links)) {
+    return links ?? '';
+  }
+
+  return links
+    .map((link) => `${link.label ?? ''} | ${link.url ?? ''}`)
+    .join('\n');
+}
+
+function formatProfileForAdmin(profile) {
+  return {
+    ...emptyProfile,
+    ...profile,
+    social_links: formatSocialLinksForAdmin(profile.social_links),
+  };
 }
 
 const projectDetailSections = [
@@ -297,7 +316,9 @@ export default function Admin() {
 
     getProfile()
       .then((currentProfile) => {
-        const profileFromDatabase = currentProfile ?? emptyProfile;
+        const profileFromDatabase = currentProfile
+          ? formatProfileForAdmin(currentProfile)
+          : emptyProfile;
         const draft = loadProfileDraft();
         const nextProfile = draft ?? profileFromDatabase;
 
@@ -434,7 +455,7 @@ export default function Admin() {
       }
 
       const savedProfile = await saveProfile({ ...profile, avatar_url: avatarUrl });
-      setProfile(savedProfile);
+      setProfile(formatProfileForAdmin(savedProfile));
       setPhotoFile(null);
       setPhotoPreview(savedProfile.avatar_url ?? '');
       clearProfileDraft();
@@ -1072,6 +1093,17 @@ export default function Admin() {
               placeholder="https://..."
               type="url"
               value={profile.cv_url ?? ''}
+            />
+          </label>
+
+          <label className="form-grid__full">
+            Reseaux sociaux supplementaires
+            <textarea
+              name="social_links"
+              onChange={updateProfileField}
+              placeholder={'X | https://x.com/...\nYouTube | https://youtube.com/...'}
+              rows="4"
+              value={profile.social_links ?? ''}
             />
           </label>
         </div>

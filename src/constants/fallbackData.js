@@ -7,6 +7,7 @@ export const fallbackProfile = {
   email: 'contact@example.com',
   location: 'Dakar',
   avatar_url: '',
+  social_links: [],
 };
 
 export const fallbackProjects = [

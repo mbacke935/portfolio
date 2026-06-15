@@ -5,6 +5,24 @@ const profileSelect = `
   name,
   title,
   bio,
+  email,
+  phone,
+  location,
+  avatar_url,
+  cv_url,
+  github_url,
+  linkedin_url,
+  website_url,
+  social_links,
+  created_at,
+  updated_at
+`;
+
+const fallbackProfileSelect = `
+  id,
+  name,
+  title,
+  bio,
   education_summary,
   email,
   phone,
@@ -18,22 +36,29 @@ const profileSelect = `
   updated_at
 `;
 
-const fallbackProfileSelect = `
-  id,
-  name,
-  title,
-  bio,
-  email,
-  phone,
-  location,
-  avatar_url,
-  cv_url,
-  github_url,
-  linkedin_url,
-  website_url,
-  created_at,
-  updated_at
-`;
+function normalizeSocialLinks(value) {
+  if (Array.isArray(value)) {
+    return value
+      .filter((item) => item?.label && item?.url)
+      .map((item) => ({
+        label: String(item.label).trim(),
+        url: String(item.url).trim(),
+      }));
+  }
+
+  return String(value ?? '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [label, ...urlParts] = line.split('|');
+      return {
+        label: label?.trim(),
+        url: urlParts.join('|').trim(),
+      };
+    })
+    .filter((item) => item.label && item.url);
+}
 
 export async function getProfile() {
   const query = getSupabaseClient()
@@ -45,7 +70,7 @@ export async function getProfile() {
 
   const { data, error } = await query;
 
-  if (error?.message?.includes('education_summary')) {
+  if (error?.message?.includes('education_summary') || error?.message?.includes('social_links')) {
     const { data: fallbackData, error: fallbackError } = await getSupabaseClient()
       .from('profiles')
       .select(fallbackProfileSelect)
@@ -81,6 +106,7 @@ export async function saveProfile(profile) {
     github_url: profile.github_url?.trim() || null,
     linkedin_url: profile.linkedin_url?.trim() || null,
     website_url: profile.website_url?.trim() || null,
+    social_links: normalizeSocialLinks(profile.social_links),
   };
 
   let query = getSupabaseClient()
@@ -91,8 +117,12 @@ export async function saveProfile(profile) {
 
   let { data, error } = await query;
 
-  if (error?.message?.includes('education_summary')) {
-    const { education_summary: _educationSummary, ...fallbackPayload } = payload;
+  if (error?.message?.includes('education_summary') || error?.message?.includes('social_links')) {
+    const {
+      education_summary: _educationSummary,
+      social_links: _socialLinks,
+      ...fallbackPayload
+    } = payload;
 
     query = getSupabaseClient()
       .from('profiles')
