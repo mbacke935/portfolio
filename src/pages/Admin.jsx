@@ -1052,6 +1052,28 @@ export default function Admin() {
               value={profile.linkedin_url ?? ''}
             />
           </label>
+
+          <label>
+            Site web
+            <input
+              name="website_url"
+              onChange={updateProfileField}
+              placeholder="https://..."
+              type="url"
+              value={profile.website_url ?? ''}
+            />
+          </label>
+
+          <label>
+            CV en ligne
+            <input
+              name="cv_url"
+              onChange={updateProfileField}
+              placeholder="https://..."
+              type="url"
+              value={profile.cv_url ?? ''}
+            />
+          </label>
         </div>
 
         <button className="button button--primary" disabled={isProfileSaving} type="submit">
