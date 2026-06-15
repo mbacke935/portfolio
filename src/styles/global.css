@@ -462,6 +462,38 @@ p {
   margin-bottom: 12px;
 }
 
+.cv-download-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, var(--color-navy), #0b2f6f),
+    var(--color-navy);
+  box-shadow: var(--shadow-soft);
+  margin: 44px auto 0;
+  max-width: 980px;
+  padding: 26px;
+}
+
+.cv-download-section h2,
+.cv-download-section p {
+  color: var(--color-white);
+}
+
+.cv-download-section .eyebrow {
+  color: #8fd3ff;
+}
+
+.cv-download-section .button {
+  border-color: rgba(255, 255, 255, 0.24);
+  background: var(--color-white);
+  color: var(--color-navy);
+  white-space: nowrap;
+}
+
 .button {
   display: inline-flex;
   min-height: 44px;
@@ -1461,6 +1493,7 @@ p {
   .project-grid,
   .admin-grid,
   .contact-layout,
+  .cv-download-section,
   .form-grid,
   .split-section,
   .credentials-grid,
@@ -1582,5 +1615,9 @@ p {
   .highlight-item {
     min-height: 240px;
     padding: 52px 24px 30px;
+  }
+
+  .cv-download-section {
+    padding: 22px;
   }
 }
