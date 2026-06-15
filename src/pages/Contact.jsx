@@ -11,23 +11,22 @@ export default function Contact() {
     <section className="page-section contact-page">
       <div className="contact-layout">
         <aside className="contact-panel">
-          <p className="eyebrow">Contact</p>
-          <h1>Discutons d'un projet</h1>
+          <p className="eyebrow"></p>
+          <h1>Contactez-moi</h1>
           <p>
-            Presente ton besoin, ton idee ou une opportunite professionnelle. Le
-            message sera prepare pour l'adresse configuree dans l'espace admin.
+            Vous avez une question, une proposition de projet ou souhaitez simplement discuter de vos besoins ?
           </p>
 
           <div className="contact-email-card">
-            <span>Email admin</span>
-            <strong>{adminEmail || 'A configurer dans admin'}</strong>
+            <span>Email</span>
+            <strong>{adminEmail || 'bientôt disponible'}</strong>
           </div>
 
           {(isLoading || error || !isSupabaseConfigured) && (
             <p className="status-note">
               {isLoading && isSupabaseConfigured
-                ? "Chargement de l'email de contact..."
-                : "Mode demonstration : configure l'email public dans l'admin."}
+                ? "Chargement de contact..."
+                : "Les données seront bientôt disponibles."}
             </p>
           )}
         </aside>
@@ -35,7 +34,7 @@ export default function Contact() {
         <div className="contact-form-panel">
           <div className="contact-form-heading">
             <p className="eyebrow">Message</p>
-            <h2>Envoyer une demande</h2>
+            <h2></h2>
           </div>
           <ContactForm adminEmail={adminEmail} />
         </div>

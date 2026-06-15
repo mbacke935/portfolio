@@ -7,7 +7,7 @@ export default function NotFound() {
         <p className="eyebrow">Erreur 404</p>
         <h1>Page introuvable</h1>
         <p>
-          Cette route n'existe pas encore. Utilise la navigation principale pour
+          Cette page n'existe pas encore. Utilise la navigation principale pour
           revenir vers une page disponible du portfolio.
         </p>
       </div>
