@@ -28,7 +28,21 @@ function validateContactForm(form) {
   return errors;
 }
 
-export default function ContactForm() {
+function buildMailtoLink(adminEmail, form) {
+  const subject = form.subject.trim() || `Message portfolio de ${form.name.trim()}`;
+  const body = [
+    `Nom: ${form.name.trim()}`,
+    `Email: ${form.email.trim()}`,
+    '',
+    form.message.trim(),
+  ].join('\n');
+
+  return `mailto:${adminEmail}?subject=${encodeURIComponent(
+    subject,
+  )}&body=${encodeURIComponent(body)}`;
+}
+
+export default function ContactForm({ adminEmail }) {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState({ type: 'idle', message: '' });
@@ -46,6 +60,10 @@ export default function ContactForm() {
 
     const nextErrors = validateContactForm(form);
 
+    if (!adminEmail) {
+      nextErrors.email = "L'email de l'admin n'est pas encore configure.";
+    }
+
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
       setStatus({
@@ -58,18 +76,25 @@ export default function ContactForm() {
     setIsSubmitting(true);
 
     try {
-      await submitContactMessage(form);
+      if (isSupabaseConfigured) {
+        try {
+          await submitContactMessage(form);
+        } catch (error) {
+          // L'email reste prioritaire : Supabase sert d'historique secondaire.
+        }
+      }
+
+      window.location.href = buildMailtoLink(adminEmail, form);
       setForm(initialForm);
       setStatus({
         type: 'success',
-        message: 'Message envoye avec succes.',
+        message: "Ton application email va s'ouvrir avec le message prepare.",
       });
     } catch (error) {
       setStatus({
         type: 'error',
-        message: isSupabaseConfigured
-          ? "L'envoi a echoue. Verifie la configuration Supabase et les regles RLS."
-          : 'Mode demonstration : configure Supabase pour envoyer le message.',
+        message:
+          "L'envoi a echoue. Verifie l'email admin et la configuration Supabase.",
       });
     } finally {
       setIsSubmitting(false);
