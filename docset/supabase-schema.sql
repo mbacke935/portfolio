@@ -18,6 +18,7 @@ create table if not exists public.profiles (
   name text not null,
   title text not null,
   bio text,
+  education_summary text,
   email text,
   phone text,
   location text,

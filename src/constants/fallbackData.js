@@ -2,6 +2,8 @@ export const fallbackProfile = {
   name: 'Nom complet',
   title: 'Titre professionnel',
   bio: 'Courte presentation professionnelle a renseigner depuis l espace admin.',
+  education_summary:
+    'Le parcours scolaire et universitaire sera renseigne depuis l espace admin.',
   email: 'contact@example.com',
   location: 'Dakar',
   avatar_url: '',

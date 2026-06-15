@@ -30,6 +30,7 @@ const emptyProfile = {
   name: '',
   title: '',
   bio: '',
+  education_summary: '',
   email: '',
   phone: '',
   location: '',
@@ -887,6 +888,17 @@ export default function Admin() {
               placeholder="Quelques lignes pour presenter votre profil."
               rows="4"
               value={profile.bio ?? ''}
+            />
+          </label>
+
+          <label className="form-grid__full">
+            Parcours scolaire et universitaire
+            <textarea
+              name="education_summary"
+              onChange={updateProfileField}
+              placeholder="Resume ton parcours scolaire, universitaire et academique."
+              rows="5"
+              value={profile.education_summary ?? ''}
             />
           </label>
 
