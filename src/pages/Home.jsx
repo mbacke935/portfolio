@@ -53,6 +53,15 @@ function escapeHtml(value) {
     .replace(/'/g, '&#039;');
 }
 
+function fileNameFromProfile(profile) {
+  return `${profile.name || 'cv'}`
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 function listItems(items, renderItem) {
   if (!items.length) {
     return '<p>Informations a renseigner depuis la plateforme.</p>';
@@ -72,7 +81,7 @@ function groupSkillsByCategory(skills) {
   }, {});
 }
 
-function buildCvHtml({ certifications, education, profile, projects, skills }) {
+function buildCvPdfHtml({ certifications, education, profile, projects, skills }) {
   const skillGroups = groupSkillsByCategory(skills);
   const socialLinks = Array.isArray(profile.social_links)
     ? profile.social_links.map((link) => `${link.label}: ${link.url}`)
@@ -86,6 +95,8 @@ function buildCvHtml({ certifications, education, profile, projects, skills }) {
     profile.website_url,
     ...socialLinks,
   ].filter(Boolean);
+  const mainProjects = projects.slice(0, 4);
+  const fileName = fileNameFromProfile(profile) || 'cv';
 
   return `<!doctype html>
 <html lang="fr">
@@ -94,86 +105,263 @@ function buildCvHtml({ certifications, education, profile, projects, skills }) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CV - ${escapeHtml(profile.name)}</title>
   <style>
-    body { color: #102033; font-family: Arial, sans-serif; line-height: 1.55; margin: 42px; }
-    h1 { color: #061a40; font-size: 34px; margin: 0 0 6px; }
-    h2 { border-bottom: 2px solid #d6e4f2; color: #061a40; margin-top: 28px; padding-bottom: 6px; }
-    h3 { color: #1f7ae0; margin-bottom: 4px; }
-    p { margin: 0 0 10px; }
-    ul { margin-top: 8px; padding-left: 20px; }
-    li { margin-bottom: 6px; }
-    .title { color: #1f7ae0; font-weight: 700; }
-    .contact { color: #5b6b80; margin: 12px 0 22px; }
-    .item { margin-bottom: 14px; }
-    @media print { body { margin: 24px; } }
+    @page { margin: 0; size: A4; }
+    * { box-sizing: border-box; }
+    body {
+      background: #d8e6f5;
+      color: #102033;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+      margin: 0;
+    }
+    .toolbar {
+      background: #061a40;
+      color: #ffffff;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      padding: 14px;
+    }
+    .toolbar button {
+      background: #38bdf8;
+      border: 0;
+      border-radius: 8px;
+      color: #061a40;
+      cursor: pointer;
+      font-weight: 800;
+      padding: 10px 16px;
+    }
+    .cv-page {
+      background: #ffffff;
+      display: grid;
+      grid-template-columns: 72mm 1fr;
+      margin: 24px auto;
+      min-height: 297mm;
+      overflow: hidden;
+      width: 210mm;
+    }
+    .sidebar {
+      background: linear-gradient(180deg, #061a40 0%, #0b2c66 100%);
+      color: #ffffff;
+      padding: 22mm 9mm;
+    }
+    .photo {
+      align-items: center;
+      background: rgba(255, 255, 255, 0.12);
+      border: 2px solid rgba(255, 255, 255, 0.72);
+      border-radius: 50%;
+      display: flex;
+      height: 34mm;
+      justify-content: center;
+      margin-bottom: 12mm;
+      overflow: hidden;
+      width: 34mm;
+    }
+    .photo img {
+      height: 100%;
+      object-fit: cover;
+      width: 100%;
+    }
+    .photo span {
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .sidebar h2 {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+      color: #ffffff;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      margin: 18px 0 10px;
+      padding-bottom: 7px;
+      text-transform: uppercase;
+    }
+    .sidebar p,
+    .sidebar li {
+      color: #dbeafe;
+      font-size: 11px;
+      margin: 0 0 7px;
+      overflow-wrap: anywhere;
+    }
+    .sidebar ul,
+    .content ul {
+      margin: 0;
+      padding-left: 16px;
+    }
+    .content {
+      padding: 20mm 14mm;
+    }
+    h1 {
+      color: #061a40;
+      font-size: 34px;
+      line-height: 1.05;
+      margin: 0 0 7px;
+    }
+    .title {
+      color: #1f7ae0;
+      font-size: 15px;
+      font-weight: 800;
+      margin: 0 0 18px;
+    }
+    .intro {
+      background: #eef7ff;
+      border-left: 5px solid #38bdf8;
+      border-radius: 0 10px 10px 0;
+      color: #24364d;
+      margin-bottom: 18px;
+      padding: 13px 15px;
+    }
+    .content h2 {
+      color: #061a40;
+      font-size: 15px;
+      letter-spacing: 0.06em;
+      margin: 21px 0 10px;
+      text-transform: uppercase;
+    }
+    .content h3 {
+      color: #1f7ae0;
+      font-size: 12px;
+      margin: 10px 0 5px;
+    }
+    .content p,
+    .content li {
+      color: #334155;
+      font-size: 12px;
+      margin: 0 0 7px;
+    }
+    .item {
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+    }
+    .item strong {
+      color: #061a40;
+    }
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      list-style: none;
+      padding: 0;
+    }
+    .pill-list li {
+      background: #e0f2fe;
+      border-radius: 999px;
+      color: #075985;
+      font-weight: 700;
+      padding: 5px 9px;
+    }
+    @media print {
+      body { background: #ffffff; }
+      .toolbar { display: none; }
+      .cv-page { margin: 0; }
+    }
   </style>
 </head>
 <body>
-  <h1>${escapeHtml(profile.name)}</h1>
-  <p class="title">${escapeHtml(profile.title)}</p>
-  <p class="contact">${contactItems.map(escapeHtml).join(' | ')}</p>
+  <div class="toolbar">
+    <button onclick="window.print()">Enregistrer en PDF</button>
+    <span>Destination : Enregistrer au format PDF, fichier suggere : ${escapeHtml(fileName)}-portfolio.pdf</span>
+  </div>
 
-  <h2>Profil</h2>
-  <p>${escapeHtml(profile.bio)}</p>
+  <main class="cv-page">
+    <aside class="sidebar">
+      <div class="photo">
+        ${
+          profile.avatar_url
+            ? `<img src="${escapeHtml(profile.avatar_url)}" alt="">`
+            : `<span>${escapeHtml(
+                profile.name
+                  .split(' ')
+                  .map((part) => part[0])
+                  .join('')
+                  .slice(0, 2),
+              )}</span>`
+        }
+      </div>
 
-  <h2>Parcours scolaire et universitaire</h2>
-  <p>${escapeHtml(profile.education_summary)}</p>
+      <h2>Contact</h2>
+      ${listItems(contactItems, (item) => escapeHtml(item))}
 
-  <h2>Competences</h2>
-  ${Object.entries(skillGroups)
-    .map(
-      ([category, categorySkills]) => `
-        <h3>${escapeHtml(category)}</h3>
-        ${listItems(categorySkills, (skill) => escapeHtml(skill.name))}
-      `,
-    )
-    .join('')}
+      <h2>Competences</h2>
+      ${Object.entries(skillGroups)
+        .map(
+          ([category, categorySkills]) => `
+            <h3>${escapeHtml(category)}</h3>
+            <ul class="pill-list">
+              ${categorySkills
+                .map((skill) => `<li>${escapeHtml(skill.name)}</li>`)
+                .join('')}
+            </ul>
+          `,
+        )
+        .join('')}
+    </aside>
 
-  <h2>Projets</h2>
-  ${listItems(
-    projects,
-    (project) =>
-      `<strong>${escapeHtml(project.title)}</strong> - ${escapeHtml(
-        project.short_description,
-      )}`,
-  )}
+    <section class="content">
+      <h1>${escapeHtml(profile.name)}</h1>
+      <p class="title">${escapeHtml(profile.title)}</p>
 
-  <h2>Diplomes</h2>
-  ${listItems(
-    education,
-    (item) =>
-      `<strong>${escapeHtml(item.degree)}</strong>, ${escapeHtml(
-        item.institution,
-      )}${item.description ? ` - ${escapeHtml(item.description)}` : ''}`,
-  )}
+      <div class="intro">${escapeHtml(profile.bio)}</div>
 
-  <h2>Certificats</h2>
-  ${listItems(
-    certifications,
-    (item) =>
-      `<strong>${escapeHtml(item.title)}</strong>, ${escapeHtml(item.issuer)}`,
-  )}
+      <h2>Parcours scolaire et universitaire</h2>
+      <p>${escapeHtml(profile.education_summary)}</p>
+
+      <h2>Projets selectionnes</h2>
+      ${listItems(
+        mainProjects,
+        (project) =>
+          `<div class="item"><strong>${escapeHtml(project.title)}</strong><p>${escapeHtml(
+            project.short_description,
+          )}</p></div>`,
+      )}
+
+      <h2>Diplomes</h2>
+      ${listItems(
+        education,
+        (item) =>
+          `<div class="item"><strong>${escapeHtml(item.degree)}</strong><p>${escapeHtml(
+            item.institution,
+          )}${item.description ? ` - ${escapeHtml(item.description)}` : ''}</p></div>`,
+      )}
+
+      <h2>Certificats</h2>
+      ${listItems(
+        certifications,
+        (item) =>
+          `<div class="item"><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(
+            item.issuer,
+          )}</p></div>`,
+      )}
+    </section>
+  </main>
+
+  <script>
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        window.print();
+      }, 400);
+    });
+  </script>
 </body>
 </html>`;
 }
 
-function downloadGeneratedCv({ certifications, education, profile, projects, skills }) {
-  const html = buildCvHtml({ certifications, education, profile, projects, skills });
+function generateCvPdf({ certifications, education, profile, projects, skills }) {
+  const html = buildCvPdfHtml({ certifications, education, profile, projects, skills });
   const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  const fileName = `${profile.name || 'cv'}`
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+  const printWindow = window.open(url, '_blank');
 
-  link.href = url;
-  link.download = `${fileName || 'cv'}-portfolio.html`;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
+  if (!printWindow) {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${fileNameFromProfile(profile) || 'cv'}-portfolio.html`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
 
 export default function Home() {
@@ -256,9 +444,9 @@ export default function Home() {
         <section className="cv-download-section" aria-labelledby="cv-download-title">
           <div>
             <p className="eyebrow">CV dynamique</p>
-            <h2 id="cv-download-title">Telecharger le CV genere</h2>
+            <h2 id="cv-download-title">Generer le CV en PDF</h2>
             <p>
-              Le fichier est construit automatiquement avec les informations
+              Le PDF est construit automatiquement avec les informations
               configurees dans l'espace admin : profil, competences, projets,
               diplomes et certificats.
             </p>
@@ -266,7 +454,7 @@ export default function Home() {
           <button
             className="button button--primary"
             onClick={() =>
-              downloadGeneratedCv({
+              generateCvPdf({
                 certifications,
                 education,
                 profile: activeProfile,
@@ -276,7 +464,7 @@ export default function Home() {
             }
             type="button"
           >
-            Telecharger le CV
+            Generer le PDF
           </button>
         </section>
       </div>
