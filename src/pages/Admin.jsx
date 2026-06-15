@@ -857,7 +857,7 @@ export default function Admin() {
   }
 
   return (
-    <section className="page-section page-section--compact">
+    <section className="page-section admin-page">
       <div className="section-heading">
         <p className="eyebrow">Administration</p>
         <h1>Gestion des informations</h1>
@@ -888,7 +888,36 @@ export default function Admin() {
         </button>
       </div>
 
-      <form className="admin-form" onSubmit={handleProfileSubmit}>
+      <div className="admin-stats" aria-label="Resume admin">
+        <div>
+          <strong>{projects.length}</strong>
+          <span>Projets</span>
+        </div>
+        <div>
+          <strong>{skills.length}</strong>
+          <span>Competences</span>
+        </div>
+        <div>
+          <strong>{education.length}</strong>
+          <span>Diplomes</span>
+        </div>
+        <div>
+          <strong>{certifications.length}</strong>
+          <span>Certificats</span>
+        </div>
+      </div>
+
+      <div className="admin-layout">
+        <nav className="admin-sidebar" aria-label="Sections admin">
+          <a href="#admin-profile">Profil</a>
+          <a href="#admin-projects">Projets</a>
+          <a href="#admin-skills">Competences</a>
+          <a href="#admin-education">Diplomes</a>
+          <a href="#admin-certifications">Certificats</a>
+        </nav>
+
+        <div className="admin-workspace">
+      <form className="admin-form admin-section" id="admin-profile" onSubmit={handleProfileSubmit}>
         <div className="admin-form__heading">
           <div>
             <p className="eyebrow">Hero accueil</p>
@@ -1030,7 +1059,7 @@ export default function Admin() {
         </button>
       </form>
 
-      <form className="admin-form" onSubmit={handleProjectSubmit}>
+      <form className="admin-form admin-section" id="admin-projects" onSubmit={handleProjectSubmit}>
         <div className="admin-form__heading">
           <div>
             <p className="eyebrow">Projets</p>
@@ -1269,7 +1298,7 @@ export default function Admin() {
         </div>
       </form>
 
-      <form className="admin-form" onSubmit={handleSkillSubmit}>
+      <form className="admin-form admin-section" id="admin-skills" onSubmit={handleSkillSubmit}>
         <div className="admin-form__heading">
           <div>
             <p className="eyebrow">A propos</p>
@@ -1388,7 +1417,7 @@ export default function Admin() {
         </div>
       </form>
 
-      <form className="admin-form" onSubmit={handleEducationSubmit}>
+      <form className="admin-form admin-section" id="admin-education" onSubmit={handleEducationSubmit}>
         <div className="admin-form__heading">
           <div>
             <p className="eyebrow">Diplomes</p>
@@ -1510,7 +1539,7 @@ export default function Admin() {
         </div>
       </form>
 
-      <form className="admin-form" onSubmit={handleCertificationSubmit}>
+      <form className="admin-form admin-section" id="admin-certifications" onSubmit={handleCertificationSubmit}>
         <div className="admin-form__heading">
           <div>
             <p className="eyebrow">Certificats</p>
@@ -1649,6 +1678,8 @@ export default function Admin() {
           ))}
         </div>
       </form>
+        </div>
+      </div>
     </section>
   );
 }
