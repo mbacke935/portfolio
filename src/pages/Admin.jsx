@@ -23,7 +23,10 @@ import {
 } from '../services/educationService.js';
 import { getProfile, saveProfile } from '../services/profileService.js';
 import { deleteSkill, getSkills, saveSkill } from '../services/skillService.js';
-import { uploadProfilePhoto } from '../services/storageService.js';
+import {
+  uploadCertificationImage,
+  uploadProfilePhoto,
+} from '../services/storageService.js';
 
 const emptyProfile = {
   id: null,
@@ -88,6 +91,7 @@ const emptyCertification = {
   issuer: '',
   issue_date: '',
   credential_url: '',
+  image_url: '',
   display_order: 0,
 };
 
@@ -238,6 +242,8 @@ export default function Admin() {
   const [educationForm, setEducationForm] = useState(emptyEducation);
   const [certifications, setCertifications] = useState([]);
   const [certificationForm, setCertificationForm] = useState(emptyCertification);
+  const [certificationImageFile, setCertificationImageFile] = useState(null);
+  const [certificationImagePreview, setCertificationImagePreview] = useState('');
   const [isContentLoading, setIsContentLoading] = useState(false);
   const [isContentSaving, setIsContentSaving] = useState(false);
   const groupedSkills = groupSkillsByCategory(skills);
@@ -521,6 +527,30 @@ export default function Admin() {
     setCertificationForm((current) => ({ ...current, [name]: value }));
   }
 
+  function updateCertificationImage(event) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setStatus({
+        type: 'error',
+        message: 'Choisis un fichier image pour le certificat.',
+      });
+      return;
+    }
+
+    setCertificationImageFile(file);
+
+    if (certificationImagePreview?.startsWith('blob:')) {
+      URL.revokeObjectURL(certificationImagePreview);
+    }
+
+    setCertificationImagePreview(URL.createObjectURL(file));
+  }
+
   async function handleSkillSubmit(event) {
     event.preventDefault();
     setStatus({ type: 'idle', message: '' });
@@ -638,8 +668,19 @@ export default function Admin() {
     setIsContentSaving(true);
 
     try {
-      await saveCertification(certificationForm);
+      let imageUrl = certificationForm.image_url;
+
+      if (certificationImageFile) {
+        imageUrl = await uploadCertificationImage(
+          certificationImageFile,
+          session.user.id,
+        );
+      }
+
+      await saveCertification({ ...certificationForm, image_url: imageUrl });
       setCertificationForm(emptyCertification);
+      setCertificationImageFile(null);
+      setCertificationImagePreview('');
       await loadAdminContent();
       setStatus({ type: 'success', message: 'Certificat enregistre.' });
     } catch (error) {
@@ -667,6 +708,12 @@ export default function Admin() {
     } finally {
       setIsContentSaving(false);
     }
+  }
+
+  function editCertification(certification) {
+    setCertificationForm({ ...emptyCertification, ...certification });
+    setCertificationImageFile(null);
+    setCertificationImagePreview(certification.image_url ?? '');
   }
 
   async function handleLogin(event) {
@@ -1530,6 +1577,29 @@ export default function Admin() {
               value={certificationForm.credential_url ?? ''}
             />
           </label>
+
+          <div className="form-grid__full photo-upload-field">
+            <div className="photo-preview" aria-label="Apercu image certificat">
+              {certificationImagePreview || certificationForm.image_url ? (
+                <img
+                  src={certificationImagePreview || certificationForm.image_url}
+                  alt=""
+                />
+              ) : (
+                <span>Image</span>
+              )}
+            </div>
+
+            <label>
+              Image locale du certificat
+              <input
+                accept="image/*"
+                name="certification_image"
+                onChange={updateCertificationImage}
+                type="file"
+              />
+            </label>
+          </div>
         </div>
 
         <div className="admin-actions">
@@ -1539,7 +1609,11 @@ export default function Admin() {
           {certificationForm.id && (
             <button
               className="button button--secondary"
-              onClick={() => setCertificationForm(emptyCertification)}
+              onClick={() => {
+                setCertificationForm(emptyCertification);
+                setCertificationImageFile(null);
+                setCertificationImagePreview('');
+              }}
               type="button"
             >
               Annuler
@@ -1557,9 +1631,7 @@ export default function Admin() {
               <div className="admin-actions">
                 <button
                   className="button button--secondary"
-                  onClick={() =>
-                    setCertificationForm({ ...emptyCertification, ...item })
-                  }
+                  onClick={() => editCertification(item)}
                   type="button"
                 >
                   Modifier

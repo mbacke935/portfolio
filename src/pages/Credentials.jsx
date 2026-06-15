@@ -82,6 +82,14 @@ export default function Credentials() {
           <h2>Certificats</h2>
           {certifications.map((item) => (
             <article className="credential-item" key={item.id}>
+              {item.image_url && (
+                <img
+                  className="credential-image"
+                  src={item.image_url}
+                  alt=""
+                  loading="lazy"
+                />
+              )}
               <h3>{item.title}</h3>
               <p>{item.issuer}</p>
               {item.issue_date && (
