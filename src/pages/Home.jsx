@@ -106,7 +106,11 @@ function buildCvPdfHtml({ certifications, education, profile, projects, skills }
   <title>CV - ${escapeHtml(profile.name)}</title>
   <style>
     @page { margin: 0; size: A4; }
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
     body {
       background: #d8e6f5;
       color: #102033;
@@ -253,7 +257,17 @@ function buildCvPdfHtml({ certifications, education, profile, projects, skills }
     @media print {
       body { background: #ffffff; }
       .toolbar { display: none; }
-      .cv-page { margin: 0; }
+      .cv-page {
+        margin: 0;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+      .sidebar,
+      .intro,
+      .pill-list li {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
     }
   </style>
 </head>
