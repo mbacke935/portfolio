@@ -269,43 +269,58 @@ export default function Admin() {
   const groupedSkills = groupSkillsByCategory(skills);
   const adminSections = [
     {
+      action: 'Mettre a jour le profil',
       count: profile.name ? 1 : 0,
       description:
         "Photo, identite, presentation, coordonnees, CV et reseaux sociaux publics.",
       id: 'profile',
+      icon: 'P',
       label: 'Profil',
+      metricLabel: 'profil configure',
       title: 'Profil public',
     },
     {
+      action: 'Publier une realisation',
       count: projects.length,
       description:
         'Ajout, modification et suppression des projets avec resume et fiche detaillee.',
       id: 'projects',
+      icon: 'R',
       label: 'Projets',
+      metricLabel: 'projets enregistres',
       title: 'Gestion des projets',
     },
     {
+      action: 'Classer les competences',
       count: skills.length,
       description:
         'Competences organisees par categories techniques pour la page A propos.',
       id: 'skills',
+      icon: 'C',
       label: 'Competences',
+      metricLabel: 'competences publiees',
       title: 'Bibliotheque de competences',
     },
     {
+      action: 'Documenter le parcours',
       count: education.length,
       description:
         'Parcours scolaire et universitaire publie dans la page Diplomes.',
       id: 'education',
+      icon: 'D',
       label: 'Diplomes',
+      metricLabel: 'diplomes renseignes',
       title: 'Parcours academique',
     },
     {
+      action: 'Valoriser les preuves',
       count: certifications.length,
       description:
         'Certificats, organismes, liens de preuve et images locales associees.',
       id: 'certifications',
+      icon: 'A',
       label: 'Certificats',
+      metricLabel: 'certificats ajoutes',
       title: 'Certifications',
     },
   ];
@@ -991,17 +1006,34 @@ export default function Admin() {
               onClick={() => setActiveAdminSection(section.id)}
               type="button"
             >
-              <span>{section.label}</span>
+              <span className="admin-sidebar__button-label">
+                <span className="admin-sidebar__icon">{section.icon}</span>
+                <span>{section.label}</span>
+              </span>
               <strong>{section.count}</strong>
             </button>
           ))}
         </nav>
 
         <div className="admin-workspace">
-          <div className="admin-workspace-hero">
-            <p className="eyebrow">Section active</p>
-            <h2>{activeAdminSectionDetails.title}</h2>
-            <p>{activeAdminSectionDetails.description}</p>
+          <div
+            className={`admin-workspace-hero admin-workspace-hero--${activeAdminSectionDetails.id}`}
+          >
+            <div className="admin-workspace-hero__content">
+              <span className="admin-workspace-hero__icon">
+                {activeAdminSectionDetails.icon}
+              </span>
+              <div>
+                <p className="eyebrow">Section active</p>
+                <h2>{activeAdminSectionDetails.title}</h2>
+                <p>{activeAdminSectionDetails.description}</p>
+              </div>
+            </div>
+            <div className="admin-workspace-hero__meta">
+              <span>{activeAdminSectionDetails.action}</span>
+              <strong>{activeAdminSectionDetails.count}</strong>
+              <small>{activeAdminSectionDetails.metricLabel}</small>
+            </div>
           </div>
 
       {activeAdminSection === 'profile' && (
