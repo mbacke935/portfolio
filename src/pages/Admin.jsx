@@ -263,9 +263,55 @@ export default function Admin() {
   const [certificationForm, setCertificationForm] = useState(emptyCertification);
   const [certificationImageFile, setCertificationImageFile] = useState(null);
   const [certificationImagePreview, setCertificationImagePreview] = useState('');
+  const [activeAdminSection, setActiveAdminSection] = useState('profile');
   const [isContentLoading, setIsContentLoading] = useState(false);
   const [isContentSaving, setIsContentSaving] = useState(false);
   const groupedSkills = groupSkillsByCategory(skills);
+  const adminSections = [
+    {
+      count: profile.name ? 1 : 0,
+      description:
+        "Photo, identite, presentation, coordonnees, CV et reseaux sociaux publics.",
+      id: 'profile',
+      label: 'Profil',
+      title: 'Profil public',
+    },
+    {
+      count: projects.length,
+      description:
+        'Ajout, modification et suppression des projets avec resume et fiche detaillee.',
+      id: 'projects',
+      label: 'Projets',
+      title: 'Gestion des projets',
+    },
+    {
+      count: skills.length,
+      description:
+        'Competences organisees par categories techniques pour la page A propos.',
+      id: 'skills',
+      label: 'Competences',
+      title: 'Bibliotheque de competences',
+    },
+    {
+      count: education.length,
+      description:
+        'Parcours scolaire et universitaire publie dans la page Diplomes.',
+      id: 'education',
+      label: 'Diplomes',
+      title: 'Parcours academique',
+    },
+    {
+      count: certifications.length,
+      description:
+        'Certificats, organismes, liens de preuve et images locales associees.',
+      id: 'certifications',
+      label: 'Certificats',
+      title: 'Certifications',
+    },
+  ];
+  const activeAdminSectionDetails =
+    adminSections.find((section) => section.id === activeAdminSection) ??
+    adminSections[0];
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -930,14 +976,35 @@ export default function Admin() {
 
       <div className="admin-layout">
         <nav className="admin-sidebar" aria-label="Sections admin">
-          <a href="#admin-profile">Profil</a>
-          <a href="#admin-projects">Projets</a>
-          <a href="#admin-skills">Competences</a>
-          <a href="#admin-education">Diplomes</a>
-          <a href="#admin-certifications">Certificats</a>
+          <div className="admin-sidebar__header">
+            <span>Menu admin</span>
+            <small>Choisis une section</small>
+          </div>
+          {adminSections.map((section) => (
+            <button
+              className={`admin-sidebar__button${
+                activeAdminSection === section.id
+                  ? ' admin-sidebar__button--active'
+                  : ''
+              }`}
+              key={section.id}
+              onClick={() => setActiveAdminSection(section.id)}
+              type="button"
+            >
+              <span>{section.label}</span>
+              <strong>{section.count}</strong>
+            </button>
+          ))}
         </nav>
 
         <div className="admin-workspace">
+          <div className="admin-workspace-hero">
+            <p className="eyebrow">Section active</p>
+            <h2>{activeAdminSectionDetails.title}</h2>
+            <p>{activeAdminSectionDetails.description}</p>
+          </div>
+
+      {activeAdminSection === 'profile' && (
       <form className="admin-form admin-section" id="admin-profile" onSubmit={handleProfileSubmit}>
         <div className="admin-form__heading">
           <div>
@@ -1112,7 +1179,9 @@ export default function Admin() {
           {isProfileSaving ? 'Enregistrement...' : 'Enregistrer le hero'}
         </button>
       </form>
+      )}
 
+      {activeAdminSection === 'projects' && (
       <form className="admin-form admin-section" id="admin-projects" onSubmit={handleProjectSubmit}>
         <div className="admin-form__heading">
           <div>
@@ -1351,7 +1420,9 @@ export default function Admin() {
           ))}
         </div>
       </form>
+      )}
 
+      {activeAdminSection === 'skills' && (
       <form className="admin-form admin-section" id="admin-skills" onSubmit={handleSkillSubmit}>
         <div className="admin-form__heading">
           <div>
@@ -1470,7 +1541,9 @@ export default function Admin() {
           ))}
         </div>
       </form>
+      )}
 
+      {activeAdminSection === 'education' && (
       <form className="admin-form admin-section" id="admin-education" onSubmit={handleEducationSubmit}>
         <div className="admin-form__heading">
           <div>
@@ -1592,7 +1665,9 @@ export default function Admin() {
           ))}
         </div>
       </form>
+      )}
 
+      {activeAdminSection === 'certifications' && (
       <form className="admin-form admin-section" id="admin-certifications" onSubmit={handleCertificationSubmit}>
         <div className="admin-form__heading">
           <div>
@@ -1732,6 +1807,7 @@ export default function Admin() {
           ))}
         </div>
       </form>
+      )}
         </div>
       </div>
     </section>
