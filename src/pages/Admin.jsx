@@ -7,6 +7,11 @@ import {
   signOutAdmin,
 } from '../services/authService.js';
 import {
+  deleteProject,
+  getAdminProjects,
+  saveProject,
+} from '../services/projectService.js';
+import {
   deleteCertification,
   getCertifications,
   saveCertification,
@@ -42,6 +47,22 @@ const emptySkill = {
   name: '',
   category: '',
   icon: '',
+  display_order: 0,
+};
+
+const emptyProject = {
+  id: null,
+  title: '',
+  slug: '',
+  short_description: '',
+  full_description: '',
+  technologies: '',
+  github_url: '',
+  demo_url: '',
+  cover_image: '',
+  gallery: '',
+  status: 'published',
+  featured: false,
   display_order: 0,
 };
 
@@ -87,6 +108,30 @@ function groupSkillsByCategory(skills) {
   }, {});
 }
 
+function slugify(value) {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function formatProjectForForm(project) {
+  return {
+    ...emptyProject,
+    ...project,
+    technologies: Array.isArray(project.technologies)
+      ? project.technologies.join(', ')
+      : project.technologies ?? '',
+    gallery: Array.isArray(project.gallery)
+      ? project.gallery.join(', ')
+      : project.gallery ?? '',
+    featured: Boolean(project.featured),
+  };
+}
+
 function loadProfileDraft() {
   try {
     const draft = localStorage.getItem(PROFILE_DRAFT_KEY);
@@ -114,6 +159,7 @@ function clearProfileDraft() {
 
 export default function Admin() {
   const skillNameInputRef = useRef(null);
+  const projectTitleInputRef = useRef(null);
   const [session, setSession] = useState(null);
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [status, setStatus] = useState({ type: 'idle', message: '' });
@@ -124,6 +170,8 @@ export default function Admin() {
   const [photoPreview, setPhotoPreview] = useState('');
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [isProfileSaving, setIsProfileSaving] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [projectForm, setProjectForm] = useState(emptyProject);
   const [skills, setSkills] = useState([]);
   const [skillForm, setSkillForm] = useState(emptySkill);
   const [education, setEducation] = useState([]);
@@ -212,12 +260,19 @@ export default function Admin() {
     setIsContentLoading(true);
 
     try {
-      const [nextSkills, nextEducation, nextCertifications] = await Promise.all([
+      const [
+        nextProjects,
+        nextSkills,
+        nextEducation,
+        nextCertifications,
+      ] = await Promise.all([
+        getAdminProjects(),
         getSkills(),
         getEducation(),
         getCertifications(),
       ]);
 
+      setProjects(nextProjects);
       setSkills(nextSkills);
       setEducation(nextEducation);
       setCertifications(nextCertifications);
@@ -225,7 +280,7 @@ export default function Admin() {
       setStatus({
         type: 'error',
         message:
-          "Impossible de charger les competences, diplomes ou certificats.",
+          "Impossible de charger les projets, competences, diplomes ou certificats.",
       });
     } finally {
       setIsContentLoading(false);
@@ -276,6 +331,21 @@ export default function Admin() {
     });
   }
 
+  function updateProjectField(event) {
+    const { checked, name, type, value } = event.target;
+
+    setProjectForm((current) => {
+      const nextValue = type === 'checkbox' ? checked : value;
+      const nextProject = { ...current, [name]: nextValue };
+
+      if (name === 'title' && !current.id) {
+        nextProject.slug = slugify(value);
+      }
+
+      return nextProject;
+    });
+  }
+
   async function handleProfileSubmit(event) {
     event.preventDefault();
     setStatus({ type: 'idle', message: '' });
@@ -316,6 +386,60 @@ export default function Admin() {
       });
     } finally {
       setIsProfileSaving(false);
+    }
+  }
+
+  async function handleProjectSubmit(event) {
+    event.preventDefault();
+    setStatus({ type: 'idle', message: '' });
+
+    if (
+      projectForm.title.trim().length < 2 ||
+      projectForm.slug.trim().length < 2 ||
+      projectForm.short_description.trim().length < 10
+    ) {
+      setStatus({
+        type: 'error',
+        message: 'Le titre, le slug et le resume du projet sont obligatoires.',
+      });
+      return;
+    }
+
+    setIsContentSaving(true);
+
+    try {
+      await saveProject(projectForm);
+      setProjectForm(emptyProject);
+      await loadAdminContent();
+      projectTitleInputRef.current?.focus();
+      setStatus({
+        type: 'success',
+        message: 'Projet enregistre. Tu peux en ajouter un autre.',
+      });
+    } catch (error) {
+      setStatus({
+        type: 'error',
+        message: `Projet non enregistre : ${error.message ?? 'verifie les policies RLS.'}`,
+      });
+    } finally {
+      setIsContentSaving(false);
+    }
+  }
+
+  async function handleProjectDelete(id) {
+    setIsContentSaving(true);
+
+    try {
+      await deleteProject(id);
+      await loadAdminContent();
+      setStatus({ type: 'success', message: 'Projet supprime.' });
+    } catch (error) {
+      setStatus({
+        type: 'error',
+        message: `Suppression impossible : ${error.message ?? 'verifie les policies RLS.'}`,
+      });
+    } finally {
+      setIsContentSaving(false);
     }
   }
 
@@ -783,6 +907,190 @@ export default function Admin() {
         <button className="button button--primary" disabled={isProfileSaving} type="submit">
           {isProfileSaving ? 'Enregistrement...' : 'Enregistrer le hero'}
         </button>
+      </form>
+
+      <form className="admin-form" onSubmit={handleProjectSubmit}>
+        <div className="admin-form__heading">
+          <div>
+            <p className="eyebrow">Projets</p>
+            <h2>Realisations</h2>
+            <p>
+              Ces projets alimentent la page Projets. Le resume est affiche a
+              cote de la carte projet, en alternance gauche/droite.
+            </p>
+          </div>
+          {isContentLoading && <p className="status-note">Chargement...</p>}
+        </div>
+
+        <div className="form-grid">
+          <label>
+            Titre
+            <input
+              name="title"
+              onChange={updateProjectField}
+              placeholder="Naatalfi"
+              ref={projectTitleInputRef}
+              required
+              type="text"
+              value={projectForm.title}
+            />
+          </label>
+
+          <label>
+            Slug URL
+            <input
+              name="slug"
+              onChange={updateProjectField}
+              placeholder="naatalfi"
+              required
+              type="text"
+              value={projectForm.slug}
+            />
+          </label>
+
+          <label className="form-grid__full">
+            Resume affiche a cote
+            <textarea
+              name="short_description"
+              onChange={updateProjectField}
+              placeholder="Resume court du projet."
+              required
+              rows="3"
+              value={projectForm.short_description}
+            />
+          </label>
+
+          <label className="form-grid__full">
+            Description detaillee
+            <textarea
+              name="full_description"
+              onChange={updateProjectField}
+              placeholder="Description complete pour la page detail."
+              rows="5"
+              value={projectForm.full_description ?? ''}
+            />
+          </label>
+
+          <label>
+            Technologies
+            <input
+              name="technologies"
+              onChange={updateProjectField}
+              placeholder="React, Supabase, Vite"
+              type="text"
+              value={projectForm.technologies ?? ''}
+            />
+          </label>
+
+          <label>
+            Image principale
+            <input
+              name="cover_image"
+              onChange={updateProjectField}
+              placeholder="https://..."
+              type="url"
+              value={projectForm.cover_image ?? ''}
+            />
+          </label>
+
+          <label>
+            Lien GitHub
+            <input
+              name="github_url"
+              onChange={updateProjectField}
+              placeholder="https://github.com/..."
+              type="url"
+              value={projectForm.github_url ?? ''}
+            />
+          </label>
+
+          <label>
+            Lien demo
+            <input
+              name="demo_url"
+              onChange={updateProjectField}
+              placeholder="https://..."
+              type="url"
+              value={projectForm.demo_url ?? ''}
+            />
+          </label>
+
+          <label>
+            Statut
+            <select
+              name="status"
+              onChange={updateProjectField}
+              value={projectForm.status}
+            >
+              <option value="published">Publie</option>
+              <option value="draft">Brouillon</option>
+              <option value="archived">Archive</option>
+            </select>
+          </label>
+
+          <label>
+            Ordre
+            <input
+              name="display_order"
+              onChange={updateProjectField}
+              type="number"
+              value={projectForm.display_order}
+            />
+          </label>
+
+          <label className="checkbox-field">
+            <input
+              checked={projectForm.featured}
+              name="featured"
+              onChange={updateProjectField}
+              type="checkbox"
+            />
+            Projet mis en avant sur l'accueil
+          </label>
+        </div>
+
+        <div className="admin-actions">
+          <button className="button button--primary" disabled={isContentSaving} type="submit">
+            {projectForm.id ? 'Modifier le projet' : 'Ajouter le projet'}
+          </button>
+          {projectForm.id && (
+            <button
+              className="button button--secondary"
+              onClick={() => setProjectForm(emptyProject)}
+              type="button"
+            >
+              Annuler
+            </button>
+          )}
+        </div>
+
+        <div className="admin-list">
+          {projects.map((project) => (
+            <article className="admin-list-item" key={project.id}>
+              <div>
+                <strong>{project.title}</strong>
+                <span>{project.status}</span>
+              </div>
+              <div className="admin-actions">
+                <button
+                  className="button button--secondary"
+                  onClick={() => setProjectForm(formatProjectForForm(project))}
+                  type="button"
+                >
+                  Modifier
+                </button>
+                <button
+                  className="button button--secondary"
+                  disabled={isContentSaving}
+                  onClick={() => handleProjectDelete(project.id)}
+                  type="button"
+                >
+                  Supprimer
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
       </form>
 
       <form className="admin-form" onSubmit={handleSkillSubmit}>

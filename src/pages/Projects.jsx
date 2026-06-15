@@ -26,9 +26,23 @@ export default function Projects() {
         )}
       </div>
 
-      <div className="project-grid">
-        {projects.map((project) => (
-          <ProjectCard key={project.slug} project={project} />
+      <div className="project-showcase-list">
+        {projects.map((project, index) => (
+          <article
+            className={
+              index % 2 === 0
+                ? 'project-showcase'
+                : 'project-showcase project-showcase--reverse'
+            }
+            key={project.slug}
+          >
+            <ProjectCard project={project} />
+            <div className="project-summary-panel">
+              <p className="eyebrow">Resume projet</p>
+              <h2>{project.title}</h2>
+              <p>{project.short_description ?? project.description}</p>
+            </div>
+          </article>
         ))}
       </div>
 

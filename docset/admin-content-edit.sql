@@ -11,8 +11,38 @@ as $$
 $$;
 
 alter table public.skills enable row level security;
+alter table public.projects enable row level security;
 alter table public.education enable row level security;
 alter table public.certifications enable row level security;
+
+drop policy if exists "Admin can read all projects" on public.projects;
+create policy "Admin can read all projects"
+on public.projects
+for select
+to authenticated
+using (public.is_portfolio_admin());
+
+drop policy if exists "Admin can insert projects" on public.projects;
+create policy "Admin can insert projects"
+on public.projects
+for insert
+to authenticated
+with check (public.is_portfolio_admin());
+
+drop policy if exists "Admin can update projects" on public.projects;
+create policy "Admin can update projects"
+on public.projects
+for update
+to authenticated
+using (public.is_portfolio_admin())
+with check (public.is_portfolio_admin());
+
+drop policy if exists "Admin can delete projects" on public.projects;
+create policy "Admin can delete projects"
+on public.projects
+for delete
+to authenticated
+using (public.is_portfolio_admin());
 
 drop policy if exists "Admin can insert skills" on public.skills;
 create policy "Admin can insert skills"
