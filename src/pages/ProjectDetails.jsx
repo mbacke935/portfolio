@@ -4,6 +4,44 @@ import { useAsyncData } from '../hooks/useAsyncData.js';
 import { isSupabaseConfigured } from '../lib/supabaseClient.js';
 import { getProjectBySlug } from '../services/projectService.js';
 
+const detailSections = [
+  { key: 'objective', title: 'Objectif' },
+  { key: 'operation', title: 'Fonctionnement' },
+  { key: 'strengths', title: 'Points forts' },
+  { key: 'weaknesses', title: 'Points faibles' },
+  { key: 'perspectives', title: 'Perspectives' },
+];
+
+function parseProjectDescription(value) {
+  const text = value ?? '';
+  const details = {
+    overview: text,
+    sections: [],
+  };
+
+  detailSections.forEach((section, index) => {
+    const nextTitle = detailSections[index + 1]?.title;
+    const pattern = nextTitle
+      ? new RegExp(`## ${section.title}\\n([\\s\\S]*?)(?=\\n## ${nextTitle}\\n)`)
+      : new RegExp(`## ${section.title}\\n([\\s\\S]*)`);
+    const match = text.match(pattern);
+
+    if (match?.[1]?.trim()) {
+      details.sections.push({
+        title: section.title,
+        content: match[1].trim(),
+      });
+    }
+  });
+
+  const firstSectionMatch = text.match(/(^|\n)## Objectif\n/);
+  details.overview = firstSectionMatch
+    ? text.slice(0, firstSectionMatch.index).trim()
+    : text;
+
+  return details;
+}
+
 export default function ProjectDetails() {
   const { slug } = useParams();
   const { data, error, isLoading } = useAsyncData(
@@ -13,6 +51,7 @@ export default function ProjectDetails() {
   const fallbackProject = fallbackProjects.find((project) => project.slug === slug);
   const project = data ?? fallbackProject;
   const gallery = project?.gallery ?? [];
+  const projectDetails = parseProjectDescription(project?.full_description);
 
   return (
     <section className="page-section page-section--compact">
@@ -29,7 +68,7 @@ export default function ProjectDetails() {
         <p className="eyebrow">Detail projet</p>
         <h1>{project?.title ?? 'Projet introuvable'}</h1>
         <p>
-          {project?.full_description ??
+          {projectDetails.overview ||
             'Aucun projet publie ne correspond a cette adresse pour le moment.'}
         </p>
         {(isLoading || error || !isSupabaseConfigured) && (
@@ -45,6 +84,17 @@ export default function ProjectDetails() {
         <div className="tag-list tag-list--large">
           {project.technologies.map((technology) => (
             <span key={technology}>{technology}</span>
+          ))}
+        </div>
+      )}
+
+      {projectDetails.sections.length > 0 && (
+        <div className="project-detail-grid">
+          {projectDetails.sections.map((section) => (
+            <article className="project-detail-panel" key={section.title}>
+              <h2>{section.title}</h2>
+              <p>{section.content}</p>
+            </article>
           ))}
         </div>
       )}

@@ -56,6 +56,11 @@ const emptyProject = {
   slug: '',
   short_description: '',
   full_description: '',
+  objective: '',
+  operation: '',
+  strengths: '',
+  weaknesses: '',
+  perspectives: '',
   technologies: '',
   github_url: '',
   demo_url: '',
@@ -118,10 +123,64 @@ function slugify(value) {
     .replace(/^-+|-+$/g, '');
 }
 
+const projectDetailSections = [
+  { key: 'objective', title: 'Objectif' },
+  { key: 'operation', title: 'Fonctionnement' },
+  { key: 'strengths', title: 'Points forts' },
+  { key: 'weaknesses', title: 'Points faibles' },
+  { key: 'perspectives', title: 'Perspectives' },
+];
+
+function parseProjectDetailDescription(value) {
+  const text = value ?? '';
+  const parsed = {
+    full_description: text,
+    objective: '',
+    operation: '',
+    strengths: '',
+    weaknesses: '',
+    perspectives: '',
+  };
+
+  projectDetailSections.forEach((section, index) => {
+    const nextTitle = projectDetailSections[index + 1]?.title;
+    const pattern = nextTitle
+      ? new RegExp(`## ${section.title}\\n([\\s\\S]*?)(?=\\n## ${nextTitle}\\n)`)
+      : new RegExp(`## ${section.title}\\n([\\s\\S]*)`);
+    const match = text.match(pattern);
+
+    if (match?.[1]) {
+      parsed[section.key] = match[1].trim();
+    }
+  });
+
+  const firstSectionMatch = text.match(/(^|\n)## Objectif\n/);
+  parsed.full_description = firstSectionMatch
+    ? text.slice(0, firstSectionMatch.index).trim()
+    : text;
+
+  return parsed;
+}
+
+function buildProjectDetailDescription(project) {
+  const overview = project.full_description?.trim() ?? '';
+  const sections = projectDetailSections
+    .map((section) => {
+      const content = project[section.key]?.trim();
+      return content ? `## ${section.title}\n${content}` : '';
+    })
+    .filter(Boolean);
+
+  return [overview, ...sections].filter(Boolean).join('\n\n');
+}
+
 function formatProjectForForm(project) {
+  const detailFields = parseProjectDetailDescription(project.full_description);
+
   return {
     ...emptyProject,
     ...project,
+    ...detailFields,
     technologies: Array.isArray(project.technologies)
       ? project.technologies.join(', ')
       : project.technologies ?? '',
@@ -408,7 +467,10 @@ export default function Admin() {
     setIsContentSaving(true);
 
     try {
-      await saveProject(projectForm);
+      await saveProject({
+        ...projectForm,
+        full_description: buildProjectDetailDescription(projectForm),
+      });
       setProjectForm(emptyProject);
       await loadAdminContent();
       projectTitleInputRef.current?.focus();
@@ -961,13 +1023,68 @@ export default function Admin() {
           </label>
 
           <label className="form-grid__full">
-            Description detaillee
+            Presentation detaillee
             <textarea
               name="full_description"
               onChange={updateProjectField}
-              placeholder="Description complete pour la page detail."
-              rows="5"
+              placeholder="Presentation generale du projet."
+              rows="4"
               value={projectForm.full_description ?? ''}
+            />
+          </label>
+
+          <label className="form-grid__full">
+            Objectif
+            <textarea
+              name="objective"
+              onChange={updateProjectField}
+              placeholder="Quel probleme le projet cherche a resoudre ?"
+              rows="3"
+              value={projectForm.objective ?? ''}
+            />
+          </label>
+
+          <label className="form-grid__full">
+            Fonctionnement
+            <textarea
+              name="operation"
+              onChange={updateProjectField}
+              placeholder="Comment le projet fonctionne, cote utilisateur et cote technique ?"
+              rows="3"
+              value={projectForm.operation ?? ''}
+            />
+          </label>
+
+          <label className="form-grid__full">
+            Points forts
+            <textarea
+              name="strengths"
+              onChange={updateProjectField}
+              placeholder="Ce qui rend le projet solide ou interessant."
+              rows="3"
+              value={projectForm.strengths ?? ''}
+            />
+          </label>
+
+          <label className="form-grid__full">
+            Points faibles
+            <textarea
+              name="weaknesses"
+              onChange={updateProjectField}
+              placeholder="Limites actuelles, contraintes ou aspects a ameliorer."
+              rows="3"
+              value={projectForm.weaknesses ?? ''}
+            />
+          </label>
+
+          <label className="form-grid__full">
+            Perspectives
+            <textarea
+              name="perspectives"
+              onChange={updateProjectField}
+              placeholder="Evolutions prevues, prochaines fonctionnalites ou ameliorations."
+              rows="3"
+              value={projectForm.perspectives ?? ''}
             />
           </label>
 
