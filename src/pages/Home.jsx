@@ -273,7 +273,7 @@ function buildCvPdfHtml({ certifications, education, profile, projects, skills }
 </head>
 <body>
   <div class="toolbar">
-    <button onclick="window.print()">Enregistrer en PDF</button>
+    <button onclick="window.print()">Enregistrer</button>
     <span>Destination : Enregistrer au format PDF, fichier suggere : ${escapeHtml(fileName)}-portfolio.pdf</span>
   </div>
 
@@ -426,8 +426,8 @@ export default function Home() {
             {(isLoading || error || !isSupabaseConfigured) && (
               <p className="status-note">
                 {isLoading && isSupabaseConfigured
-                  ? 'Chargement du profil depuis Supabase...'
-                  : 'Mode demonstration : configure Supabase pour afficher les infos admin.'}
+                  ? 'Chargement du profil...'
+                  : 'Les données seront bientôt disponibles.'}
               </p>
             )}
             <div className="hero-actions">
@@ -457,13 +457,9 @@ export default function Home() {
 
         <section className="cv-download-section" aria-labelledby="cv-download-title">
           <div>
-            <p className="eyebrow">CV dynamique</p>
-            <h2 id="cv-download-title">Generer le CV en PDF</h2>
-            <p>
-              Le PDF est construit automatiquement avec les informations
-              configurees dans l'espace admin : profil, competences, projets,
-              diplomes et certificats.
-            </p>
+            <p className="eyebrow">Voici mon CV</p>
+            <h2 id="cv-download-title">Vous pouvez le télécharger ici</h2>
+            
           </div>
           <button
             className="button button--primary"
@@ -478,7 +474,7 @@ export default function Home() {
             }
             type="button"
           >
-            Generer le PDF
+            télécharger
           </button>
         </section>
       </div>
