@@ -42,6 +42,59 @@ function parseProjectDescription(value) {
   return details;
 }
 
+function renderRichText(value) {
+  const lines = String(value ?? '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const blocks = [];
+  let listItems = [];
+
+  function flushList() {
+    if (listItems.length > 0) {
+      blocks.push({ items: listItems, type: 'list' });
+      listItems = [];
+    }
+  }
+
+  lines.forEach((line) => {
+    if (line.startsWith('* ') || line.startsWith('- ')) {
+      listItems.push(line.slice(2).trim());
+      return;
+    }
+
+    flushList();
+
+    if (line.startsWith('### ')) {
+      blocks.push({ text: line.slice(4), type: 'heading' });
+    } else if (line.startsWith('## ')) {
+      blocks.push({ text: line.slice(3), type: 'heading' });
+    } else {
+      blocks.push({ text: line, type: 'paragraph' });
+    }
+  });
+
+  flushList();
+
+  return blocks.map((block, index) => {
+    if (block.type === 'heading') {
+      return <h3 key={`${block.type}-${index}`}>{block.text}</h3>;
+    }
+
+    if (block.type === 'list') {
+      return (
+        <ul key={`${block.type}-${index}`}>
+          {block.items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      );
+    }
+
+    return <p key={`${block.type}-${index}`}>{block.text}</p>;
+  });
+}
+
 export default function ProjectDetails() {
   const { slug } = useParams();
   const normalizedSlug = decodeURIComponent(slug ?? '').toLowerCase();
@@ -57,7 +110,7 @@ export default function ProjectDetails() {
   const projectDetails = parseProjectDescription(project?.full_description);
 
   return (
-    <section className="page-section page-section--compact">
+    <section className="page-section project-detail-page">
       {project?.cover_image && (
         <img
           className="project-hero-image"
@@ -70,10 +123,12 @@ export default function ProjectDetails() {
       <div className="section-heading">
         <p className="eyebrow">Detail projet</p>
         <h1>{project?.title ?? 'Projet introuvable'}</h1>
-        <p>
-          {projectDetails.overview ||
-            'Aucun projet publie ne correspond a cette adresse pour le moment.'}
-        </p>
+        <div className="rich-text">
+          {renderRichText(
+            projectDetails.overview ||
+              'Aucun projet publie ne correspond a cette adresse pour le moment.',
+          )}
+        </div>
         {(isLoading || error || !isSupabaseConfigured) && (
           <p className="status-note">
             {isLoading && isSupabaseConfigured
@@ -96,7 +151,7 @@ export default function ProjectDetails() {
           {projectDetails.sections.map((section) => (
             <article className="project-detail-panel" key={section.title}>
               <h2>{section.title}</h2>
-              <p>{section.content}</p>
+              <div className="rich-text">{renderRichText(section.content)}</div>
             </article>
           ))}
         </div>
