@@ -50,6 +50,12 @@ export async function saveCertification(certification) {
     .single();
 
   if (error?.message?.includes('image_url')) {
+    if (payload.image_url) {
+      throw new Error(
+        'La colonne certifications.image_url est introuvable. Execute docset/certification-image.sql dans Supabase SQL Editor.',
+      );
+    }
+
     const { image_url: _imageUrl, ...fallbackPayload } = payload;
     const fallbackResult = await getSupabaseClient()
       .from('certifications')
