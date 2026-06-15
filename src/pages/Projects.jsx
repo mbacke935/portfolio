@@ -11,11 +11,10 @@ export default function Projects() {
   return (
     <section className="page-section">
       <div className="section-heading">
-        <p className="eyebrow">Projets</p>
-        <h1>Projets dynamiques</h1>
+        <p className="eyebrow"><h1>Projets dynamiques</h1></p>
+
         <p>
-          Les projets publies sont recuperes depuis Supabase et affiches
-          automatiquement ici.
+          Nous sommes en attente de nouveaux projets. En attendant, nous vous invitons à explorer les projets précédents.
         </p>
         {(isLoading || error || !isSupabaseConfigured) && (
           <p className="status-note">
@@ -50,8 +49,7 @@ export default function Projects() {
         <div className="empty-state">
           <h2>Aucun projet publie</h2>
           <p>
-            Ajoute un projet avec le statut `published` dans Supabase pour le
-            voir apparaitre ici automatiquement.
+            Pas de projets disponibles pour le moment.
           </p>
         </div>
       )}
