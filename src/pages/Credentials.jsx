@@ -56,11 +56,13 @@ export default function Credentials() {
         )}
       </div>
 
-      <section className="credentials-summary">
-        <p className="eyebrow">Parcours scolaire et universitaire</p>
-        <h2>Chemin academique</h2>
-        <p>{profile.education_summary ?? fallbackProfile.education_summary}</p>
-      </section>
+      {profile.education_summary && (
+        <section className="credentials-summary">
+          <p className="eyebrow">Parcours scolaire et universitaire</p>
+          <h2>Chemin académique</h2>
+          <p>{profile.education_summary}</p>
+        </section>
+      )}
 
       <div className="credentials-grid">
         <section className="credentials-panel">
