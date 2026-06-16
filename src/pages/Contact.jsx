@@ -11,7 +11,7 @@ export default function Contact() {
     <section className="page-section contact-page">
       <div className="contact-layout">
         <aside className="contact-panel">
-          <p className="eyebrow"></p>
+          <p className="eyebrow">Contact</p>
           <h1>Contactez-moi</h1>
           <p>
             Vous avez une question, une proposition de projet ou souhaitez simplement discuter de vos besoins ?
@@ -34,7 +34,7 @@ export default function Contact() {
         <div className="contact-form-panel">
           <div className="contact-form-heading">
             <p className="eyebrow">Message</p>
-            <h2></h2>
+            <h2>Envoyer un message</h2>
           </div>
           <ContactForm adminEmail={adminEmail} />
         </div>

@@ -58,17 +58,21 @@ export default function ContactForm({ adminEmail }) {
     event.preventDefault();
     setStatus({ type: 'idle', message: '' });
 
-    const nextErrors = validateContactForm(form);
-
     if (!adminEmail) {
-      nextErrors.email = "L'email de l'admin n'est pas encore configure.";
+      setStatus({
+        type: 'error',
+        message: "L'email de contact n'est pas encore configuré. Revenez plus tard.",
+      });
+      return;
     }
+
+    const nextErrors = validateContactForm(form);
 
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
       setStatus({
         type: 'error',
-        message: 'Corrige les champs indiques avant envoi.',
+        message: 'Corrigez les champs indiqués avant envoi.',
       });
       return;
     }
@@ -88,7 +92,7 @@ export default function ContactForm({ adminEmail }) {
       setForm(initialForm);
       setStatus({
         type: 'success',
-        message: "Ton application email va s'ouvrir avec le message prepare.",
+        message: "Message préparé. Votre client email devrait s'ouvrir avec le contenu pré-rempli.",
       });
     } catch (error) {
       setStatus({

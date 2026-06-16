@@ -11,7 +11,7 @@ export default function Projects() {
   return (
     <section className="page-section">
       <div className="section-heading">
-        <p className="eyebrow"><h1>Projets dynamiques</h1></p>
+        <h1>Projets dynamiques</h1>
 
         <p>
           Nous sommes en attente de nouveaux projets. En attendant, nous vous invitons à explorer les projets précédents.

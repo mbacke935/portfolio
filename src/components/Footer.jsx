@@ -32,7 +32,7 @@ export default function Footer() {
         <p>{activeProfile.title}</p>
       </div>
 
-      <div className="footer-contact" aria-label="Coordonnees">
+      <div className="footer-contact" aria-label="Coordonnées">
         {activeProfile.email && <a href={`mailto:${activeProfile.email}`}>{activeProfile.email}</a>}
         {activeProfile.phone && (
           <a href={normalizePhoneHref(activeProfile.phone)}>{activeProfile.phone}</a>

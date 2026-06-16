@@ -3,17 +3,7 @@ import { useAsyncData } from '../hooks/useAsyncData.js';
 import { isSupabaseConfigured } from '../lib/supabaseClient.js';
 import { getProfile } from '../services/profileService.js';
 import { getSkills } from '../services/skillService.js';
-
-function groupSkillsByCategory(skills) {
-  return skills.reduce((groups, skill) => {
-    const category = skill.category || 'Autres competences';
-
-    return {
-      ...groups,
-      [category]: [...(groups[category] ?? []), skill],
-    };
-  }, {});
-}
+import { groupSkillsByCategory } from '../utils/skillUtils.js';
 
 export default function About() {
   const profileState = useAsyncData(getProfile, []);
@@ -27,7 +17,7 @@ export default function About() {
   return (
     <section className="page-section about-page">
       <div className="section-heading about-heading">
-        <p className="eyebrow">Compétences</p>
+        <p className="eyebrow">À propos</p>
         <h1>{profile.name}</h1>
         <p>{profile.bio}</p>
         {hasFallback && (
@@ -38,7 +28,7 @@ export default function About() {
       </div>
 
       <div className="section-heading about-heading">
-        <p className="eyebrow">Competences</p>
+        <p className="eyebrow">Compétences</p>
         <h2>Domaines techniques</h2>
         <p>
           Voici un aperçu de mes compétences techniques, regroupées par domaine.
@@ -55,7 +45,7 @@ export default function About() {
                   className="info-card about-skill-card"
                   key={skill.id ?? skill.name}
                 >
-                  <h2>{skill.name}</h2>
+                  <h4>{skill.name}</h4>
                   {skill.icon && <p>{skill.icon}</p>}
                 </article>
               ))}

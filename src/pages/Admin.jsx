@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { isSupabaseConfigured } from '../lib/supabaseClient.js';
+import { groupSkillsByCategory } from '../utils/skillUtils.js';
+import { buildProjectDescription, parseProjectFields } from '../utils/projectUtils.js';
 import {
   getCurrentSession,
   onAuthStateChange,
@@ -108,17 +110,6 @@ const skillCategories = [
   'Intelligence artificielle',
 ];
 
-function groupSkillsByCategory(skills) {
-  return skills.reduce((groups, skill) => {
-    const category = skill.category || 'Autres competences';
-
-    return {
-      ...groups,
-      [category]: [...(groups[category] ?? []), skill],
-    };
-  }, {});
-}
-
 function slugify(value) {
   return value
     .normalize('NFD')
@@ -147,59 +138,8 @@ function formatProfileForAdmin(profile) {
   };
 }
 
-const projectDetailSections = [
-  { key: 'objective', title: 'Objectif' },
-  { key: 'operation', title: 'Fonctionnement' },
-  { key: 'strengths', title: 'Points forts' },
-  { key: 'weaknesses', title: 'Points faibles' },
-  { key: 'perspectives', title: 'Perspectives' },
-];
-
-function parseProjectDetailDescription(value) {
-  const text = value ?? '';
-  const parsed = {
-    full_description: text,
-    objective: '',
-    operation: '',
-    strengths: '',
-    weaknesses: '',
-    perspectives: '',
-  };
-
-  projectDetailSections.forEach((section, index) => {
-    const nextTitle = projectDetailSections[index + 1]?.title;
-    const pattern = nextTitle
-      ? new RegExp(`## ${section.title}\\n([\\s\\S]*?)(?=\\n## ${nextTitle}\\n)`)
-      : new RegExp(`## ${section.title}\\n([\\s\\S]*)`);
-    const match = text.match(pattern);
-
-    if (match?.[1]) {
-      parsed[section.key] = match[1].trim();
-    }
-  });
-
-  const firstSectionMatch = text.match(/(^|\n)## Objectif\n/);
-  parsed.full_description = firstSectionMatch
-    ? text.slice(0, firstSectionMatch.index).trim()
-    : text;
-
-  return parsed;
-}
-
-function buildProjectDetailDescription(project) {
-  const overview = project.full_description?.trim() ?? '';
-  const sections = projectDetailSections
-    .map((section) => {
-      const content = project[section.key]?.trim();
-      return content ? `## ${section.title}\n${content}` : '';
-    })
-    .filter(Boolean);
-
-  return [overview, ...sections].filter(Boolean).join('\n\n');
-}
-
 function formatProjectForForm(project) {
-  const detailFields = parseProjectDetailDescription(project.full_description);
+  const detailFields = parseProjectFields(project.full_description);
 
   return {
     ...emptyProject,
@@ -558,7 +498,7 @@ export default function Admin() {
     try {
       await saveProject({
         ...projectForm,
-        full_description: buildProjectDetailDescription(projectForm),
+        full_description: buildProjectDescription(projectForm),
       });
       setProjectForm(emptyProject);
       await loadAdminContent();
@@ -578,6 +518,7 @@ export default function Admin() {
   }
 
   async function handleProjectDelete(id) {
+    if (!window.confirm('Supprimer ce projet ? Cette action est irréversible.')) return;
     setIsContentSaving(true);
 
     try {
@@ -667,6 +608,7 @@ export default function Admin() {
   }
 
   async function handleSkillDelete(id) {
+    if (!window.confirm('Supprimer cette compétence ? Cette action est irréversible.')) return;
     setIsContentSaving(true);
 
     try {
@@ -716,6 +658,7 @@ export default function Admin() {
   }
 
   async function handleEducationDelete(id) {
+    if (!window.confirm('Supprimer ce diplôme ? Cette action est irréversible.')) return;
     setIsContentSaving(true);
 
     try {
@@ -776,6 +719,7 @@ export default function Admin() {
   }
 
   async function handleCertificationDelete(id) {
+    if (!window.confirm('Supprimer ce certificat ? Cette action est irréversible.')) return;
     setIsContentSaving(true);
 
     try {
@@ -796,6 +740,7 @@ export default function Admin() {
     setCertificationForm({ ...emptyCertification, ...certification });
     setCertificationImageFile(null);
     setCertificationImagePreview(certification.image_url ?? '');
+    document.getElementById('admin-certifications')?.scrollIntoView({ behavior: 'smooth' });
   }
 
   async function handleLogin(event) {
@@ -1434,7 +1379,10 @@ export default function Admin() {
               <div className="admin-actions">
                 <button
                   className="button button--secondary"
-                  onClick={() => setProjectForm(formatProjectForForm(project))}
+                  onClick={() => {
+                    setProjectForm(formatProjectForForm(project));
+                    document.getElementById('admin-projects')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   type="button"
                 >
                   Modifier
@@ -1552,7 +1500,10 @@ export default function Admin() {
                     <div className="admin-actions">
                       <button
                         className="button button--secondary"
-                        onClick={() => setSkillForm({ ...emptySkill, ...skill })}
+                        onClick={() => {
+                          setSkillForm({ ...emptySkill, ...skill });
+                          document.getElementById('admin-skills')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
                         type="button"
                       >
                         Modifier
@@ -1679,7 +1630,10 @@ export default function Admin() {
               <div className="admin-actions">
                 <button
                   className="button button--secondary"
-                  onClick={() => setEducationForm({ ...emptyEducation, ...item })}
+                  onClick={() => {
+                    setEducationForm({ ...emptyEducation, ...item });
+                    document.getElementById('admin-education')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   type="button"
                 >
                   Modifier

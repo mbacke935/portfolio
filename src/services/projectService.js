@@ -51,19 +51,6 @@ export async function getAdminProjects() {
   return data ?? [];
 }
 
-export async function getFeaturedProjects() {
-  const { data, error } = await getSupabaseClient()
-    .from('projects')
-    .select(projectSelect)
-    .eq('status', 'published')
-    .eq('featured', true)
-    .order('display_order', { ascending: true })
-    .order('created_at', { ascending: false });
-
-  throwIfError(error);
-  return data ?? [];
-}
-
 export async function getProjectBySlug(slug) {
   const normalizedSlug = normalizeSlug(slug);
   const { data, error } = await getSupabaseClient()

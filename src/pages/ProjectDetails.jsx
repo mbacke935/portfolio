@@ -3,44 +3,7 @@ import { fallbackProjects } from '../constants/fallbackData.js';
 import { useAsyncData } from '../hooks/useAsyncData.js';
 import { isSupabaseConfigured } from '../lib/supabaseClient.js';
 import { getProjectBySlug } from '../services/projectService.js';
-
-const detailSections = [
-  { key: 'objective', title: 'Objectif' },
-  { key: 'operation', title: 'Fonctionnement' },
-  { key: 'strengths', title: 'Points forts' },
-  { key: 'weaknesses', title: 'Points faibles' },
-  { key: 'perspectives', title: 'Perspectives' },
-];
-
-function parseProjectDescription(value) {
-  const text = value ?? '';
-  const details = {
-    overview: text,
-    sections: [],
-  };
-
-  detailSections.forEach((section, index) => {
-    const nextTitle = detailSections[index + 1]?.title;
-    const pattern = nextTitle
-      ? new RegExp(`## ${section.title}\\n([\\s\\S]*?)(?=\\n## ${nextTitle}\\n)`)
-      : new RegExp(`## ${section.title}\\n([\\s\\S]*)`);
-    const match = text.match(pattern);
-
-    if (match?.[1]?.trim()) {
-      details.sections.push({
-        title: section.title,
-        content: match[1].trim(),
-      });
-    }
-  });
-
-  const firstSectionMatch = text.match(/(^|\n)## Objectif\n/);
-  details.overview = firstSectionMatch
-    ? text.slice(0, firstSectionMatch.index).trim()
-    : text;
-
-  return details;
-}
+import { parseProjectDescription } from '../utils/projectUtils.js';
 
 function renderRichText(value) {
   const lines = String(value ?? '')

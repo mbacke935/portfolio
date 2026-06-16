@@ -652,8 +652,11 @@ p {
   box-shadow: none;
 }
 
-.about-skill-card h2 {
+.about-skill-card h4 {
   color: var(--color-white);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 10px;
 }
 
 .about-skill-card p {

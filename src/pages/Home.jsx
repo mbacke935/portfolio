@@ -13,6 +13,7 @@ import { getProfile } from '../services/profileService.js';
 import { getProjects } from '../services/projectService.js';
 import { getEducation } from '../services/educationService.js';
 import { getSkills } from '../services/skillService.js';
+import { groupSkillsByCategory } from '../utils/skillUtils.js';
 
 function formatCount(count, singular, plural) {
   return `${count} ${count > 1 ? plural : singular}`;
@@ -68,17 +69,6 @@ function listItems(items, renderItem) {
   }
 
   return `<ul>${items.map((item) => `<li>${renderItem(item)}</li>`).join('')}</ul>`;
-}
-
-function groupSkillsByCategory(skills) {
-  return skills.reduce((groups, skill) => {
-    const category = skill.category || 'Autres competences';
-
-    return {
-      ...groups,
-      [category]: [...(groups[category] ?? []), skill],
-    };
-  }, {});
 }
 
 function buildCvPdfHtml({ certifications, education, profile, projects, skills }) {
