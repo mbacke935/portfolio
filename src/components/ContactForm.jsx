@@ -28,16 +28,17 @@ function validateContactForm(form) {
   return errors;
 }
 
-function buildMailtoLink(adminEmail, form) {
-  const subject = form.subject.trim() || `Message portfolio de ${form.name.trim()}`;
-  const body = [
-    `Nom : ${form.name.trim()}`,
-    `Email : ${form.email.trim()}`,
-    '',
-    form.message.trim(),
-  ].join('\n');
+async function sendViaApi(form, adminEmail) {
+  const response = await fetch('/api/contact', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...form, adminEmail }),
+  });
 
-  return `mailto:${adminEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error(body.error || "Échec de l'envoi.");
+  }
 }
 
 export default function ContactForm({ adminEmail }) {
@@ -63,48 +64,35 @@ export default function ContactForm({ adminEmail }) {
       return;
     }
 
+    if (!adminEmail) {
+      setStatus({
+        type: 'error',
+        message: "Le formulaire n'est pas encore configuré. Revenez plus tard.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      // Envoi email via Vercel API → Resend (canal principal)
+      await sendViaApi(form, adminEmail);
+
+      // Sauvegarde en base Supabase (historique, non bloquant)
       if (isSupabaseConfigured) {
-        await submitContactMessage(form);
-        setForm(initialForm);
-        setStatus({
-          type: 'success',
-          message: 'Message envoyé ! Je vous répondrai dans les meilleurs délais.',
-        });
-        return;
+        submitContactMessage(form).catch(() => {});
       }
 
-      // Fallback mailto si Supabase non configuré
-      if (adminEmail) {
-        window.open(buildMailtoLink(adminEmail, form), '_blank');
-        setForm(initialForm);
-        setStatus({
-          type: 'success',
-          message: "Votre client email s'est ouvert avec le message pré-rempli.",
-        });
-        return;
-      }
-
+      setForm(initialForm);
+      setStatus({
+        type: 'success',
+        message: 'Message envoyé ! Je vous répondrai dans les meilleurs délais.',
+      });
+    } catch (err) {
       setStatus({
         type: 'error',
-        message: "Le formulaire n'est pas encore configuré. Contactez-moi directement par email.",
+        message: err.message || "L'envoi a échoué. Réessayez ou contactez-moi directement par email.",
       });
-    } catch (error) {
-      if (adminEmail) {
-        window.open(buildMailtoLink(adminEmail, form), '_blank');
-        setForm(initialForm);
-        setStatus({
-          type: 'success',
-          message: "Message préparé dans votre client email.",
-        });
-      } else {
-        setStatus({
-          type: 'error',
-          message: "L'envoi a échoué. Réessayez ou contactez-moi directement par email.",
-        });
-      }
     } finally {
       setIsSubmitting(false);
     }
