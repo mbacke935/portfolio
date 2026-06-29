@@ -71,9 +71,14 @@ export default function ProjectDetails() {
   const project = data ?? fallbackProject;
   const gallery = project?.gallery ?? [];
   const projectDetails = parseProjectDescription(project?.full_description);
+  const hasLinks = project?.github_url || project?.demo_url;
 
   return (
     <section className="page-section project-detail-page">
+      <Link className="text-link project-back-link" to="/projects">
+        ← Retour aux projets
+      </Link>
+
       {project?.cover_image && (
         <img
           className="project-hero-image"
@@ -109,6 +114,34 @@ export default function ProjectDetails() {
         </div>
       )}
 
+      {hasLinks && (
+        <div className="project-cta-bar">
+          <p className="eyebrow" style={{ margin: 0 }}>Liens du projet</p>
+          <div className="project-cta-bar__actions">
+            {project?.github_url && (
+              <a
+                className="button button--secondary"
+                href={project.github_url}
+                rel="noreferrer"
+                target="_blank"
+              >
+                GitHub
+              </a>
+            )}
+            {project?.demo_url && (
+              <a
+                className="button button--primary"
+                href={project.demo_url}
+                rel="noreferrer"
+                target="_blank"
+              >
+                Voir la démo →
+              </a>
+            )}
+          </div>
+        </div>
+      )}
+
       {projectDetails.sections.length > 0 && (
         <div className="project-detail-grid">
           {projectDetails.sections.map((section) => (
@@ -119,29 +152,6 @@ export default function ProjectDetails() {
           ))}
         </div>
       )}
-
-      <div className="link-row">
-        {project?.github_url && (
-          <a
-            className="button button--secondary"
-            href={project.github_url}
-            rel="noreferrer"
-            target="_blank"
-          >
-            GitHub
-          </a>
-        )}
-        {project?.demo_url && (
-          <a
-            className="button button--primary"
-            href={project.demo_url}
-            rel="noreferrer"
-            target="_blank"
-          >
-            Demo
-          </a>
-        )}
-      </div>
 
       {gallery.length > 0 && (
         <div className="gallery-grid" aria-label="Galerie du projet">
@@ -155,10 +165,6 @@ export default function ProjectDetails() {
           ))}
         </div>
       )}
-
-      <Link className="text-link" to="/projects">
-        Retour aux projets
-      </Link>
     </section>
   );
 }

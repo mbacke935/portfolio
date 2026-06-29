@@ -14,24 +14,40 @@ export default function About() {
   const skillGroups = groupSkillsByCategory(skills);
   const hasFallback = !isSupabaseConfigured || profileState.error;
 
+  const initials = profile.name
+    .split(' ')
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2);
+
   return (
     <section className="page-section about-page">
-      <div className="section-heading about-heading">
-        <p className="eyebrow">À propos</p>
-        <h1>{profile.name}</h1>
-        <p>{profile.bio}</p>
-        {hasFallback && (
-          <p className="status-note">
-            Les données seront bientôt disponibles.
-          </p>
-        )}
+      <div className="about-profile-card">
+        <div className="about-profile-avatar" aria-label={`Photo de ${profile.name}`}>
+          {profile.avatar_url ? (
+            <img src={profile.avatar_url} alt={`Photo de ${profile.name}`} />
+          ) : (
+            <span aria-hidden="true">{initials}</span>
+          )}
+        </div>
+        <div className="about-profile-info">
+          <p className="eyebrow" style={{ color: '#38bdf8' }}>À propos</p>
+          <h1>{profile.name}</h1>
+          <p className="about-profile-title">{profile.title}</p>
+          <p>{profile.bio}</p>
+          {hasFallback && (
+            <p className="status-note" style={{ color: '#8fd3ff' }}>
+              Les données seront bientôt disponibles.
+            </p>
+          )}
+        </div>
       </div>
 
-      <div className="section-heading about-heading">
+      <div className="section-heading about-heading" style={{ marginTop: '56px' }}>
         <p className="eyebrow">Compétences</p>
         <h2>Domaines techniques</h2>
         <p>
-          Voici un aperçu de mes compétences techniques, regroupées par domaine.
+          Aperçu de mes compétences techniques, regroupées par domaine.
         </p>
       </div>
 
@@ -45,8 +61,12 @@ export default function About() {
                   className="info-card about-skill-card"
                   key={skill.id ?? skill.name}
                 >
+                  {skill.icon && (
+                    <span className="about-skill-icon" aria-hidden="true">
+                      {skill.icon}
+                    </span>
+                  )}
                   <h4>{skill.name}</h4>
-                  {skill.icon && <p>{skill.icon}</p>}
                 </article>
               ))}
             </div>

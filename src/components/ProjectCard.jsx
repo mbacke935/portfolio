@@ -15,7 +15,7 @@ export default function ProjectCard({ project, showDescription = true }) {
         }
         aria-hidden="true"
       >
-        <span>{project.title}</span>
+        <span className="project-card__label">{project.title}</span>
       </div>
       <div className="project-card__body">
         <h2>{project.title}</h2>
@@ -28,7 +28,7 @@ export default function ProjectCard({ project, showDescription = true }) {
           </div>
         )}
         <Link className="text-link" to={projectPath}>
-          Voir le detail
+          Voir le détail
         </Link>
       </div>
     </article>

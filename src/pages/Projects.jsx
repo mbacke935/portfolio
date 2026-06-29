@@ -11,18 +11,23 @@ export default function Projects() {
   return (
     <section className="page-section">
       <div className="section-heading">
-        <h1>Projets dynamiques</h1>
-
+        <p className="eyebrow">Portfolio</p>
+        <h1>Mes réalisations</h1>
         <p>
-          Nous sommes en attente de nouveaux projets. En attendant, nous vous invitons à explorer les projets précédents.
+          Projets en développement web, cybersécurité et intelligence artificielle — du concept à la mise en production.
         </p>
-        {(isLoading || error || !isSupabaseConfigured) && (
-          <p className="status-note">
-            {isLoading && isSupabaseConfigured
-              ? 'Chargement des projets depuis Supabase...'
-              : 'Mode démonstration : configurez Supabase pour afficher les projets réels.'}
-          </p>
-        )}
+        <div className="projects-header-meta">
+          <span className="project-count-badge">
+            {projects.length} projet{projects.length > 1 ? 's' : ''}
+          </span>
+          {(isLoading || error || !isSupabaseConfigured) && (
+            <span className="status-note" style={{ margin: 0 }}>
+              {isLoading && isSupabaseConfigured
+                ? 'Chargement...'
+                : 'Mode démonstration'}
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="project-showcase-list">
@@ -40,6 +45,13 @@ export default function Projects() {
               <p className="eyebrow">Résumé projet</p>
               <h2>{project.title}</h2>
               <p>{project.short_description ?? project.description}</p>
+              {project.technologies?.length > 0 && (
+                <div className="tag-list" style={{ marginTop: '16px' }}>
+                  {project.technologies.slice(0, 5).map((t) => (
+                    <span key={t}>{t}</span>
+                  ))}
+                </div>
+              )}
             </div>
           </article>
         ))}
@@ -48,9 +60,7 @@ export default function Projects() {
       {projects.length === 0 && (
         <div className="empty-state">
           <h2>Aucun projet publié</h2>
-          <p>
-            Pas de projets disponibles pour le moment.
-          </p>
+          <p>Pas de projets disponibles pour le moment.</p>
         </div>
       )}
     </section>

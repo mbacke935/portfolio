@@ -413,6 +413,11 @@ export default function Home() {
             <h1>{activeProfile.name}</h1>
             <p className="hero-title">{activeProfile.title}</p>
             <p>{activeProfile.bio}</p>
+            <div className="hero-tags" aria-label="Domaines de compétence">
+              <span>Développement Web</span>
+              <span>Cybersécurité</span>
+              <span>Intelligence Artificielle</span>
+            </div>
             {(isLoading || error || !isSupabaseConfigured) && (
               <p className="status-note">
                 {isLoading && isSupabaseConfigured
@@ -446,10 +451,26 @@ export default function Home() {
         </div>
 
         <section className="cv-download-section" aria-labelledby="cv-download-title">
-          <div>
-            <p className="eyebrow">Voici mon CV</p>
-            <h2 id="cv-download-title">Vous pouvez le télécharger ici</h2>
-            
+          <div className="cv-download-section__content">
+            <svg
+              aria-hidden="true"
+              fill="none"
+              height="44"
+              viewBox="0 0 24 24"
+              width="44"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9 12h6M9 16h6M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"
+                stroke="#38bdf8"
+                strokeLinecap="round"
+                strokeWidth="1.5"
+              />
+            </svg>
+            <div>
+              <p className="eyebrow">Voici mon CV</p>
+              <h2 id="cv-download-title">Téléchargez mon CV</h2>
+            </div>
           </div>
           <button
             className="button button--primary"
@@ -464,7 +485,7 @@ export default function Home() {
             }
             type="button"
           >
-            télécharger
+            Télécharger le CV
           </button>
         </section>
       </div>
