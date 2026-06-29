@@ -74,97 +74,120 @@ export default function ProjectDetails() {
   const hasLinks = project?.github_url || project?.demo_url;
 
   return (
-    <section className="page-section project-detail-page">
-      <Link className="text-link project-back-link" to="/projects">
-        ← Retour aux projets
-      </Link>
-
-      {project?.cover_image && (
-        <img
-          className="project-hero-image"
-          src={project.cover_image}
-          alt={project.title ? `Aperçu du projet ${project.title}` : 'Image de couverture du projet'}
-          loading="lazy"
-        />
-      )}
-
-      <div className="section-heading">
-        <p className="eyebrow">Détail projet</p>
-        <h1>{project?.title ?? 'Projet introuvable'}</h1>
-        <div className="rich-text">
-          {renderRichText(
-            projectDetails.overview ||
-              'Aucun projet publié ne correspond à cette adresse pour le moment.',
-          )}
-        </div>
-        {(isLoading || error || !isSupabaseConfigured) && (
-          <p className="status-note">
-            {isLoading && isSupabaseConfigured
-              ? 'Chargement du projet depuis Supabase...'
-              : 'Mode démonstration : configurez Supabase pour afficher le détail réel.'}
-          </p>
+    <div className="project-detail-page">
+      {/* Hero pleine largeur */}
+      <div className={project?.cover_image ? 'project-detail-hero' : 'project-detail-hero project-detail-hero--no-image'}>
+        {project?.cover_image && (
+          <img
+            alt={`Aperçu du projet ${project.title ?? ''}`}
+            className="project-detail-hero__img"
+            loading="eager"
+            src={project.cover_image}
+          />
         )}
-      </div>
-
-      {project?.technologies?.length > 0 && (
-        <div className="tag-list tag-list--large">
-          {project.technologies.map((technology) => (
-            <span key={technology}>{technology}</span>
-          ))}
-        </div>
-      )}
-
-      {hasLinks && (
-        <div className="project-cta-bar">
-          <p className="eyebrow" style={{ margin: 0 }}>Liens du projet</p>
-          <div className="project-cta-bar__actions">
-            {project?.github_url && (
-              <a
-                className="button button--secondary"
-                href={project.github_url}
-                rel="noreferrer"
-                target="_blank"
-              >
-                GitHub
-              </a>
-            )}
-            {project?.demo_url && (
-              <a
-                className="button button--primary"
-                href={project.demo_url}
-                rel="noreferrer"
-                target="_blank"
-              >
-                Voir la démo →
-              </a>
+        <div className="project-detail-hero__overlay">
+          <div className="project-detail-hero__content">
+            <Link className="project-detail-back" to="/projects">
+              ← Retour aux projets
+            </Link>
+            <p className="eyebrow">Détail projet</p>
+            <h1>{project?.title ?? 'Projet introuvable'}</h1>
+            {(isLoading || error || !isSupabaseConfigured) && (
+              <p className="project-detail-status">
+                {isLoading && isSupabaseConfigured
+                  ? 'Chargement...'
+                  : 'Mode démonstration'}
+              </p>
             )}
           </div>
         </div>
-      )}
+      </div>
 
-      {projectDetails.sections.length > 0 && (
-        <div className="project-detail-grid">
-          {projectDetails.sections.map((section) => (
-            <article className="project-detail-panel" key={section.title}>
-              <h2>{section.title}</h2>
-              <div className="rich-text">{renderRichText(section.content)}</div>
-            </article>
-          ))}
-        </div>
-      )}
+      {/* Corps : main + sidebar */}
+      <div className="project-detail-body">
+        {/* Colonne principale */}
+        <div className="project-detail-main">
+          <div className="project-detail-overview">
+            <div className="rich-text">
+              {renderRichText(
+                projectDetails.overview ||
+                  'Aucun projet publié ne correspond à cette adresse pour le moment.',
+              )}
+            </div>
+          </div>
 
-      {gallery.length > 0 && (
-        <div className="gallery-grid" aria-label="Galerie du projet">
-          {gallery.map((imageUrl, index) => (
-            <img
-              key={imageUrl}
-              src={imageUrl}
-              alt={`Capture d'écran ${index + 1} du projet ${project?.title ?? ''}`}
-              loading="lazy"
-            />
-          ))}
+          {projectDetails.sections.length > 0 && (
+            <div className="project-detail-sections">
+              {projectDetails.sections.map((section, index) => (
+                <article className="project-detail-panel" key={section.title}>
+                  <div className="project-detail-panel__header">
+                    <span className="project-detail-panel__number" aria-hidden="true">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <h2>{section.title}</h2>
+                  </div>
+                  <div className="rich-text">{renderRichText(section.content)}</div>
+                </article>
+              ))}
+            </div>
+          )}
+
+          {gallery.length > 0 && (
+            <div className="gallery-grid" aria-label="Galerie du projet">
+              {gallery.map((imageUrl, index) => (
+                <img
+                  key={imageUrl}
+                  alt={`Capture d'écran ${index + 1} du projet ${project?.title ?? ''}`}
+                  loading="lazy"
+                  src={imageUrl}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      )}
-    </section>
+
+        {/* Sidebar sticky */}
+        <aside className="project-detail-sidebar">
+          {project?.technologies?.length > 0 && (
+            <div className="project-detail-sidebar__section">
+              <h3 className="project-detail-sidebar__label">Technologies</h3>
+              <div className="tag-list">
+                {project.technologies.map((technology) => (
+                  <span key={technology}>{technology}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {hasLinks && (
+            <div className="project-detail-sidebar__section">
+              <h3 className="project-detail-sidebar__label">Liens</h3>
+              <div className="project-detail-sidebar__links">
+                {project?.github_url && (
+                  <a
+                    className="button button--secondary"
+                    href={project.github_url}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    GitHub
+                  </a>
+                )}
+                {project?.demo_url && (
+                  <a
+                    className="button button--primary"
+                    href={project.demo_url}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    Voir la démo →
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+        </aside>
+      </div>
+    </div>
   );
 }
