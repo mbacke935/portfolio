@@ -20,7 +20,7 @@ export default function Projects() {
           <p className="status-note">
             {isLoading && isSupabaseConfigured
               ? 'Chargement des projets depuis Supabase...'
-              : 'Mode demonstration : configure Supabase pour afficher les projets reels.'}
+              : 'Mode démonstration : configurez Supabase pour afficher les projets réels.'}
           </p>
         )}
       </div>
@@ -37,7 +37,7 @@ export default function Projects() {
           >
             <ProjectCard project={project} showDescription={false} />
             <div className="project-summary-panel">
-              <p className="eyebrow">Resume projet</p>
+              <p className="eyebrow">Résumé projet</p>
               <h2>{project.title}</h2>
               <p>{project.short_description ?? project.description}</p>
             </div>
@@ -47,7 +47,7 @@ export default function Projects() {
 
       {projects.length === 0 && (
         <div className="empty-state">
-          <h2>Aucun projet publie</h2>
+          <h2>Aucun projet publié</h2>
           <p>
             Pas de projets disponibles pour le moment.
           </p>

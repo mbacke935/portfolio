@@ -14,7 +14,7 @@ function validateContactForm(form) {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (form.name.trim().length < 2) {
-    errors.name = 'Le nom doit contenir au moins 2 caracteres.';
+    errors.name = 'Le nom doit contenir au moins 2 caractères.';
   }
 
   if (!emailPattern.test(form.email.trim())) {
@@ -22,7 +22,7 @@ function validateContactForm(form) {
   }
 
   if (form.message.trim().length < 10) {
-    errors.message = 'Le message doit contenir au moins 10 caracteres.';
+    errors.message = 'Le message doit contenir au moins 10 caractères.';
   }
 
   return errors;
@@ -98,7 +98,7 @@ export default function ContactForm({ adminEmail }) {
       setStatus({
         type: 'error',
         message:
-          "L'envoi a echoue. Verifie l'email admin et la configuration Supabase.",
+          "L'envoi a échoué. Vérifiez l'email admin et la configuration Supabase.",
       });
     } finally {
       setIsSubmitting(false);

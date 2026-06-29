@@ -3,9 +3,9 @@ import { NavLink } from 'react-router-dom';
 
 const links = [
   { to: '/', label: 'Accueil' },
-  { to: '/about', label: 'A propos' },
+  { to: '/about', label: 'À propos' },
   { to: '/projects', label: 'Projets' },
-  { to: '/credentials', label: 'Diplomes' },
+  { to: '/credentials', label: 'Diplômes' },
   { to: '/contact', label: 'Contact' },
 ];
 
@@ -36,11 +36,11 @@ export default function Navbar() {
           <span aria-hidden="true" />
         </button>
 
-        <button
-          aria-label="Fermer le menu"
+        <div
+          aria-hidden="true"
           className={isMenuOpen ? 'menu-backdrop menu-backdrop--visible' : 'menu-backdrop'}
           onClick={closeMenu}
-          type="button"
+          role="presentation"
         />
 
         <aside

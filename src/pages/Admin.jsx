@@ -102,10 +102,10 @@ const skillCategories = [
   'Langages de programmation',
   'Frontend',
   'Backend',
-  'Base de donnees',
-  'Reseaux',
-  'Securite informatique',
-  'Systemes Linux',
+  'Base de données',
+  'Réseaux',
+  'Sécurité informatique',
+  'Systèmes Linux',
   'DevOps',
   'Intelligence artificielle',
 ];
@@ -209,48 +209,48 @@ export default function Admin() {
   const groupedSkills = groupSkillsByCategory(skills);
   const adminSections = [
     {
-      action: 'Mettre a jour le profil',
+      action: 'Mettre à jour le profil',
       count: profile.name ? 1 : 0,
       description:
-        "Photo, identite, presentation, coordonnees, CV et reseaux sociaux publics.",
+        "Photo, identité, présentation, coordonnées, CV et réseaux sociaux publics.",
       id: 'profile',
       icon: 'P',
       label: 'Profil',
-      metricLabel: 'profil configure',
+      metricLabel: 'profil configuré',
       title: 'Profil public',
     },
     {
-      action: 'Publier une realisation',
+      action: 'Publier une réalisation',
       count: projects.length,
       description:
-        'Ajout, modification et suppression des projets avec resume et fiche detaillee.',
+        'Ajout, modification et suppression des projets avec résumé et fiche détaillée.',
       id: 'projects',
       icon: 'R',
       label: 'Projets',
-      metricLabel: 'projets enregistres',
+      metricLabel: 'projets enregistrés',
       title: 'Gestion des projets',
     },
     {
-      action: 'Classer les competences',
+      action: 'Classer les compétences',
       count: skills.length,
       description:
-        'Competences organisees par categories techniques pour la page A propos.',
+        'Compétences organisées par catégories techniques pour la page À propos.',
       id: 'skills',
       icon: 'C',
-      label: 'Competences',
-      metricLabel: 'competences publiees',
-      title: 'Bibliotheque de competences',
+      label: 'Compétences',
+      metricLabel: 'compétences publiées',
+      title: 'Bibliothèque de compétences',
     },
     {
       action: 'Documenter le parcours',
       count: education.length,
       description:
-        'Parcours scolaire et universitaire publie dans la page Diplomes.',
+        'Parcours scolaire et universitaire publié dans la page Diplômes.',
       id: 'education',
       icon: 'D',
-      label: 'Diplomes',
-      metricLabel: 'diplomes renseignes',
-      title: 'Parcours academique',
+      label: 'Diplômes',
+      metricLabel: 'diplômes renseignés',
+      title: 'Parcours académique',
     },
     {
       action: 'Valoriser les preuves',
@@ -284,7 +284,7 @@ export default function Admin() {
       .catch(() => {
         setStatus({
           type: 'error',
-          message: "Impossible de verifier la session d'administration.",
+          message: "Impossible de vérifier la session d'administration.",
         });
         setIsLoading(false);
       });
@@ -294,7 +294,7 @@ export default function Admin() {
     } catch (error) {
       setStatus({
         type: 'error',
-        message: "Impossible d'ecouter l'etat d'authentification.",
+        message: "Impossible d'écouter l'état d'authentification.",
       });
     }
 
@@ -329,7 +329,7 @@ export default function Admin() {
         if (draft) {
           setStatus({
             type: 'success',
-            message: 'Brouillon local restaure. Enregistre pour le publier.',
+            message: 'Brouillon local restauré. Enregistrez pour le publier.',
           });
         }
       })
@@ -368,7 +368,7 @@ export default function Admin() {
       setStatus({
         type: 'error',
         message:
-          "Impossible de charger les projets, competences, diplomes ou certificats.",
+          "Impossible de charger les projets, compétences, diplômes ou certificats.",
       });
     } finally {
       setIsContentLoading(false);
@@ -415,7 +415,7 @@ export default function Admin() {
     setStatus({
       type: 'success',
       message:
-        "Photo selectionnee. Elle sera conservee seulement apres l'enregistrement.",
+        "Photo sélectionnée. Elle sera conservée seulement après l'enregistrement.",
     });
   }
 
@@ -462,14 +462,14 @@ export default function Admin() {
       clearProfileDraft();
       setStatus({
         type: 'success',
-        message: 'Informations du hero enregistrees.',
+        message: 'Informations du hero enregistrées.',
       });
     } catch (error) {
       setStatus({
         type: 'error',
         message: `Enregistrement impossible : ${
           error.message ??
-          "verifie les policies RLS et Storage pour l'admin."
+          "vérifiez les politiques RLS et Storage pour l'admin."
         }`,
       });
     } finally {
@@ -488,7 +488,7 @@ export default function Admin() {
     ) {
       setStatus({
         type: 'error',
-        message: 'Le titre, le slug et le resume du projet sont obligatoires.',
+        message: 'Le titre, le slug et le résumé du projet sont obligatoires.',
       });
       return;
     }
@@ -505,12 +505,12 @@ export default function Admin() {
       projectTitleInputRef.current?.focus();
       setStatus({
         type: 'success',
-        message: 'Projet enregistre. Tu peux en ajouter un autre.',
+        message: 'Projet enregistré. Tu peux en ajouter un autre.',
       });
     } catch (error) {
       setStatus({
         type: 'error',
-        message: `Projet non enregistre : ${error.message ?? 'verifie les policies RLS.'}`,
+        message: `Projet non enregistré : ${error.message ?? 'vérifiez les politiques RLS.'}`,
       });
     } finally {
       setIsContentSaving(false);
@@ -524,11 +524,11 @@ export default function Admin() {
     try {
       await deleteProject(id);
       await loadAdminContent();
-      setStatus({ type: 'success', message: 'Projet supprime.' });
+      setStatus({ type: 'success', message: 'Projet supprimé.' });
     } catch (error) {
       setStatus({
         type: 'error',
-        message: `Suppression impossible : ${error.message ?? 'verifie les policies RLS.'}`,
+        message: `Suppression impossible : ${error.message ?? 'vérifiez les politiques RLS.'}`,
       });
     } finally {
       setIsContentSaving(false);
@@ -581,7 +581,7 @@ export default function Admin() {
     if (skillForm.name.trim().length < 2 || skillForm.category.trim().length < 2) {
       setStatus({
         type: 'error',
-        message: 'Le nom et la categorie de la competence sont obligatoires.',
+        message: 'Le nom et la catégorie de la compétence sont obligatoires.',
       });
       return;
     }
@@ -595,12 +595,12 @@ export default function Admin() {
       skillNameInputRef.current?.focus();
       setStatus({
         type: 'success',
-        message: 'Competence enregistree. Tu peux en ajouter une autre.',
+        message: 'Compétence enregistrée. Tu peux en ajouter une autre.',
       });
     } catch (error) {
       setStatus({
         type: 'error',
-        message: `Competence non enregistree : ${error.message ?? 'verifie les policies RLS.'}`,
+        message: `Compétence non enregistrée : ${error.message ?? 'vérifiez les politiques RLS.'}`,
       });
     } finally {
       setIsContentSaving(false);
@@ -614,11 +614,11 @@ export default function Admin() {
     try {
       await deleteSkill(id);
       await loadAdminContent();
-      setStatus({ type: 'success', message: 'Competence supprimee.' });
+      setStatus({ type: 'success', message: 'Compétence supprimée.' });
     } catch (error) {
       setStatus({
         type: 'error',
-        message: `Suppression impossible : ${error.message ?? 'verifie les policies RLS.'}`,
+        message: `Suppression impossible : ${error.message ?? 'vérifiez les politiques RLS.'}`,
       });
     } finally {
       setIsContentSaving(false);
@@ -635,7 +635,7 @@ export default function Admin() {
     ) {
       setStatus({
         type: 'error',
-        message: "Le diplome et l'etablissement sont obligatoires.",
+        message: "Le diplôme et l'établissement sont obligatoires.",
       });
       return;
     }
@@ -646,11 +646,11 @@ export default function Admin() {
       await saveEducation(educationForm);
       setEducationForm(emptyEducation);
       await loadAdminContent();
-      setStatus({ type: 'success', message: 'Diplome enregistre.' });
+      setStatus({ type: 'success', message: 'Diplôme enregistré.' });
     } catch (error) {
       setStatus({
         type: 'error',
-        message: `Diplome non enregistre : ${error.message ?? 'verifie les policies RLS.'}`,
+        message: `Diplôme non enregistré : ${error.message ?? 'vérifiez les politiques RLS.'}`,
       });
     } finally {
       setIsContentSaving(false);
@@ -664,11 +664,11 @@ export default function Admin() {
     try {
       await deleteEducation(id);
       await loadAdminContent();
-      setStatus({ type: 'success', message: 'Diplome supprime.' });
+      setStatus({ type: 'success', message: 'Diplôme supprimé.' });
     } catch (error) {
       setStatus({
         type: 'error',
-        message: `Suppression impossible : ${error.message ?? 'verifie les policies RLS.'}`,
+        message: `Suppression impossible : ${error.message ?? 'vérifiez les politiques RLS.'}`,
       });
     } finally {
       setIsContentSaving(false);
@@ -707,11 +707,11 @@ export default function Admin() {
       setCertificationImageFile(null);
       setCertificationImagePreview('');
       await loadAdminContent();
-      setStatus({ type: 'success', message: 'Certificat enregistre.' });
+      setStatus({ type: 'success', message: 'Certificat enregistré.' });
     } catch (error) {
       setStatus({
         type: 'error',
-        message: `Certificat non enregistre : ${error.message ?? 'verifie les policies RLS.'}`,
+        message: `Certificat non enregistré : ${error.message ?? 'vérifiez les politiques RLS.'}`,
       });
     } finally {
       setIsContentSaving(false);
@@ -725,11 +725,11 @@ export default function Admin() {
     try {
       await deleteCertification(id);
       await loadAdminContent();
-      setStatus({ type: 'success', message: 'Certificat supprime.' });
+      setStatus({ type: 'success', message: 'Certificat supprimé.' });
     } catch (error) {
       setStatus({
         type: 'error',
-        message: `Suppression impossible : ${error.message ?? 'verifie les policies RLS.'}`,
+        message: `Suppression impossible : ${error.message ?? 'vérifiez les politiques RLS.'}`,
       });
     } finally {
       setIsContentSaving(false);
@@ -752,12 +752,12 @@ export default function Admin() {
       const nextSession = await signInAdmin(credentials);
       setSession(nextSession);
       setCredentials({ email: '', password: '' });
-      setStatus({ type: 'success', message: 'Connexion admin reussie.' });
+      setStatus({ type: 'success', message: 'Connexion admin réussie.' });
     } catch (error) {
       setStatus({
         type: 'error',
         message:
-          'Connexion impossible. Verifie les identifiants admin dans Supabase Auth.',
+          'Connexion impossible. Vérifiez les identifiants admin dans Supabase Auth.',
       });
     } finally {
       setIsSubmitting(false);
@@ -771,11 +771,11 @@ export default function Admin() {
       await signOutAdmin();
       clearProfileDraft();
       setSession(null);
-      setStatus({ type: 'success', message: 'Deconnexion effectuee.' });
+      setStatus({ type: 'success', message: 'Déconnexion effectuée.' });
     } catch (error) {
       setStatus({
         type: 'error',
-        message: 'La deconnexion a echoue.',
+        message: 'La déconnexion a échoué.',
       });
     }
   }
@@ -783,7 +783,7 @@ export default function Admin() {
   if (isLoading) {
     return (
       <section className="page-section page-section--compact">
-        <p className="status-note">Verification de la session admin...</p>
+        <p className="status-note">Vérification de la session admin...</p>
       </section>
     );
   }
@@ -795,16 +795,16 @@ export default function Admin() {
           <p className="eyebrow">Administration</p>
           <h1>Connexion admin</h1>
           <p>
-            Connecte-toi avec un compte Supabase Auth autorise pour acceder a
+            Connecte-toi avec un compte Supabase Auth autorisé pour accéder à
             l'espace de gestion.
           </p>
         </div>
 
         {!isSupabaseConfigured && (
           <div className="notice-panel" role="status">
-            <strong>Supabase non configure</strong>
+            <strong>Supabase non configuré</strong>
             <p>
-              Ajoute `VITE_SUPABASE_URL` et une cle publique Supabase dans
+              Ajoute `VITE_SUPABASE_URL` et une clé publique Supabase dans
               l'environnement pour activer l'authentification.
             </p>
           </div>
@@ -889,16 +889,16 @@ export default function Admin() {
         <p className="eyebrow">Administration</p>
         <h1>Gestion des informations</h1>
         <p>
-          Tu es connecte a l'espace admin. Les actions de gestion seront
-          activees avec les policies d'ecriture Supabase.
+          Tu es connecté à l'espace admin. Les actions de gestion seront
+          activées avec les politiques d'écriture Supabase.
         </p>
       </div>
 
       <div className="notice-panel" role="status">
         <strong>Session admin active</strong>
         <p>
-          L'interface est protegee par Supabase Auth. Les competences, diplomes
-          et certificats sont maintenant geres depuis cette page.
+          L'interface est protégée par Supabase Auth. Les compétences, diplômes
+          et certificats sont maintenant gérés depuis cette page.
         </p>
       </div>
 
@@ -911,7 +911,7 @@ export default function Admin() {
       <div className="admin-toolbar">
         <span>{session.user.email}</span>
         <button className="button button--secondary" onClick={handleLogout} type="button">
-          Se deconnecter
+          Se déconnecter
         </button>
       </div>
 
@@ -922,11 +922,11 @@ export default function Admin() {
         </div>
         <div>
           <strong>{skills.length}</strong>
-          <span>Competences</span>
+          <span>Compétences</span>
         </div>
         <div>
           <strong>{education.length}</strong>
-          <span>Diplomes</span>
+          <span>Diplômes</span>
         </div>
         <div>
           <strong>{certifications.length}</strong>
@@ -989,8 +989,8 @@ export default function Admin() {
             <h2>Profil public</h2>
             <p>
               Ces champs alimentent la photo, le nom complet, le titre et la
-              courte presentation de la page d'accueil. Les textes saisis sont
-              conserves localement tant qu'ils ne sont pas enregistres.
+              courte présentation de la page d'accueil. Les textes saisis sont
+              conservés localement tant qu'ils ne sont pas enregistrés.
             </p>
           </div>
           {isProfileLoading && <p className="status-note">Chargement...</p>}
@@ -1014,7 +1014,7 @@ export default function Admin() {
             <input
               name="title"
               onChange={updateProfileField}
-              placeholder="Ex: Developpeur full-stack"
+              placeholder="Ex: Développeur full-stack"
               required
               type="text"
               value={profile.title ?? ''}
@@ -1022,11 +1022,11 @@ export default function Admin() {
           </label>
 
           <label className="form-grid__full">
-            Courte presentation
+            Courte présentation
             <textarea
               name="bio"
               onChange={updateProfileField}
-              placeholder="Quelques lignes pour presenter votre profil."
+              placeholder="Quelques lignes pour présenter votre profil."
               rows="4"
               value={profile.bio ?? ''}
             />
@@ -1037,16 +1037,16 @@ export default function Admin() {
             <textarea
               name="education_summary"
               onChange={updateProfileField}
-              placeholder="Resume ton parcours scolaire, universitaire et academique."
+              placeholder="Résume ton parcours scolaire, universitaire et académique."
               rows="5"
               value={profile.education_summary ?? ''}
             />
           </label>
 
           <div className="form-grid__full photo-upload-field">
-            <div className="photo-preview" aria-label="Apercu photo professionnelle">
+            <div className="photo-preview" aria-label="Aperçu photo professionnelle">
               {photoPreview ? (
-                <img src={photoPreview} alt="" />
+                <img src={photoPreview} alt="Aperçu de la photo de profil" />
               ) : (
                 <span>Photo</span>
               )}
@@ -1086,7 +1086,7 @@ export default function Admin() {
           </label>
 
           <label>
-            Telephone
+            Téléphone
             <input
               name="phone"
               onChange={updateProfileField}
@@ -1141,7 +1141,7 @@ export default function Admin() {
           </label>
 
           <label className="form-grid__full">
-            Reseaux sociaux supplementaires
+            Réseaux sociaux supplémentaires
             <textarea
               name="social_links"
               onChange={updateProfileField}
@@ -1163,10 +1163,10 @@ export default function Admin() {
         <div className="admin-form__heading">
           <div>
             <p className="eyebrow">Projets</p>
-            <h2>Realisations</h2>
+            <h2>Réalisations</h2>
             <p>
-              Ces projets alimentent la page Projets. Le resume est affiche a
-              cote de la carte projet, en alternance gauche/droite.
+              Ces projets alimentent la page Projets. Le résumé est affiché à
+              côté de la carte projet, en alternance gauche/droite.
             </p>
           </div>
           {isContentLoading && <p className="status-note">Chargement...</p>}
@@ -1203,7 +1203,7 @@ export default function Admin() {
             <textarea
               name="short_description"
               onChange={updateProjectField}
-              placeholder="Resume court du projet."
+              placeholder="Résumé court du projet."
               required
               rows="3"
               value={projectForm.short_description}
@@ -1211,11 +1211,11 @@ export default function Admin() {
           </label>
 
           <label className="form-grid__full">
-            Presentation detaillee
+            Présentation détaillée
             <textarea
               name="full_description"
               onChange={updateProjectField}
-              placeholder="Presentation generale du projet."
+              placeholder="Présentation générale du projet."
               rows="4"
               value={projectForm.full_description ?? ''}
             />
@@ -1406,12 +1406,12 @@ export default function Admin() {
       <form className="admin-form admin-section" id="admin-skills" onSubmit={handleSkillSubmit}>
         <div className="admin-form__heading">
           <div>
-            <p className="eyebrow">A propos</p>
-            <h2>Competences</h2>
+            <p className="eyebrow">À propos</p>
+            <h2>Compétences</h2>
             <p>
-              Ces competences alimentent la page A propos et le bloc
-              Competences de l'accueil. Aucun niveau en pourcentage n'est
-              affiche.
+              Ces compétences alimentent la page À propos et le bloc
+              Compétences de l'accueil. Aucun niveau en pourcentage n'est
+              affiché.
             </p>
           </div>
           {isContentLoading && <p className="status-note">Chargement...</p>}
@@ -1432,7 +1432,7 @@ export default function Admin() {
           </label>
 
           <label>
-            Categorie
+            Catégorie
             <input
               list="skill-categories"
               name="category"
@@ -1450,7 +1450,7 @@ export default function Admin() {
           </label>
 
           <label>
-            Icone
+            Icône
             <input
               name="icon"
               onChange={updateSkillField}
@@ -1473,7 +1473,7 @@ export default function Admin() {
 
         <div className="admin-actions">
           <button className="button button--primary" disabled={isContentSaving} type="submit">
-            {skillForm.id ? 'Modifier la competence' : 'Ajouter la competence'}
+            {skillForm.id ? 'Modifier la compétence' : 'Ajouter la compétence'}
           </button>
           {skillForm.id && (
             <button
@@ -1495,7 +1495,7 @@ export default function Admin() {
                   <article className="admin-list-item" key={skill.id}>
                     <div>
                       <strong>{skill.name}</strong>
-                      <span>{skill.icon || 'Competence'}</span>
+                      <span>{skill.icon || 'Compétence'}</span>
                     </div>
                     <div className="admin-actions">
                       <button
@@ -1530,17 +1530,17 @@ export default function Admin() {
       <form className="admin-form admin-section" id="admin-education" onSubmit={handleEducationSubmit}>
         <div className="admin-form__heading">
           <div>
-            <p className="eyebrow">Diplomes</p>
-            <h2>Education</h2>
+            <p className="eyebrow">Diplômes</p>
+            <h2>Éducation</h2>
             <p>
-              Ces informations alimentent la page Diplomes & Certificats.
+              Ces informations alimentent la page Diplômes & Certificats.
             </p>
           </div>
         </div>
 
         <div className="form-grid">
           <label>
-            Diplome
+            Diplôme
             <input
               name="degree"
               onChange={updateEducationField}
@@ -1552,11 +1552,11 @@ export default function Admin() {
           </label>
 
           <label>
-            Etablissement
+            Établissement
             <input
               name="institution"
               onChange={updateEducationField}
-              placeholder="Universite..."
+              placeholder="Université..."
               required
               type="text"
               value={educationForm.institution}
@@ -1564,7 +1564,7 @@ export default function Admin() {
           </label>
 
           <label>
-            Date debut
+            Date début
             <input
               name="start_date"
               onChange={updateEducationField}
@@ -1607,7 +1607,7 @@ export default function Admin() {
 
         <div className="admin-actions">
           <button className="button button--primary" disabled={isContentSaving} type="submit">
-            {educationForm.id ? 'Modifier le diplome' : 'Ajouter le diplome'}
+            {educationForm.id ? 'Modifier le diplôme' : 'Ajouter le diplôme'}
           </button>
           {educationForm.id && (
             <button
@@ -1660,7 +1660,7 @@ export default function Admin() {
             <p className="eyebrow">Certificats</p>
             <h2>Certifications</h2>
             <p>
-              Ces certificats restent affiches uniquement dans la page Diplomes
+              Ces certificats restent affichés uniquement dans la page Diplômes
               & Certificats.
             </p>
           </div>
@@ -1723,11 +1723,11 @@ export default function Admin() {
           </label>
 
           <div className="form-grid__full photo-upload-field">
-            <div className="photo-preview" aria-label="Apercu image certificat">
+            <div className="photo-preview" aria-label="Aperçu image certificat">
               {certificationImagePreview || certificationForm.image_url ? (
                 <img
                   src={certificationImagePreview || certificationForm.image_url}
-                  alt=""
+                  alt="Aperçu de l'image du certificat"
                 />
               ) : (
                 <span>Image</span>

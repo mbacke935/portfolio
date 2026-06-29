@@ -17,7 +17,7 @@ function formatPeriod(item) {
     return '';
   }
 
-  return `${start || 'Debut'} - ${end}`;
+  return `${start || 'Début'} - ${end}`;
 }
 
 export default function Credentials() {
@@ -43,9 +43,9 @@ export default function Credentials() {
       <div className="credentials-hero">
         <div className="section-heading">
           <p className="eyebrow">Parcours</p>
-          <h1>Diplomes & Certificats</h1>
+          <h1>Diplômes & Certificats</h1>
           <p>
-            Liste des diplomes et certificats obtenus, ainsi que des formations
+            Liste des diplômes et certificats obtenus, ainsi que des formations
             suivies.
           </p>
         </div>
@@ -66,7 +66,7 @@ export default function Credentials() {
 
       <div className="credentials-grid">
         <section className="credentials-panel">
-          <h2>Diplomes</h2>
+          <h2>Diplômes</h2>
           {education.map((item) => (
             <article className="credential-item" key={item.id}>
               <h3>{item.degree}</h3>
@@ -87,7 +87,7 @@ export default function Credentials() {
                 <img
                   className="credential-image"
                   src={item.image_url}
-                  alt=""
+                  alt={`Certificat ${item.title}`}
                   loading="lazy"
                 />
               )}

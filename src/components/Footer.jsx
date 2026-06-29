@@ -40,7 +40,7 @@ export default function Footer() {
         {activeProfile.location && <span>{activeProfile.location}</span>}
       </div>
 
-      <div className="footer-links" aria-label="Reseaux sociaux">
+      <div className="footer-links" aria-label="Réseaux sociaux">
         <FooterLink href={activeProfile.github_url} label="GitHub" />
         <FooterLink href={activeProfile.linkedin_url} label="LinkedIn" />
         <FooterLink href={activeProfile.website_url} label="Site web" />

@@ -78,25 +78,25 @@ export default function ProjectDetails() {
         <img
           className="project-hero-image"
           src={project.cover_image}
-          alt=""
+          alt={project.title ? `Aperçu du projet ${project.title}` : 'Image de couverture du projet'}
           loading="lazy"
         />
       )}
 
       <div className="section-heading">
-        <p className="eyebrow">Detail projet</p>
+        <p className="eyebrow">Détail projet</p>
         <h1>{project?.title ?? 'Projet introuvable'}</h1>
         <div className="rich-text">
           {renderRichText(
             projectDetails.overview ||
-              'Aucun projet publie ne correspond a cette adresse pour le moment.',
+              'Aucun projet publié ne correspond à cette adresse pour le moment.',
           )}
         </div>
         {(isLoading || error || !isSupabaseConfigured) && (
           <p className="status-note">
             {isLoading && isSupabaseConfigured
               ? 'Chargement du projet depuis Supabase...'
-              : 'Mode demonstration : configure Supabase pour afficher le detail reel.'}
+              : 'Mode démonstration : configurez Supabase pour afficher le détail réel.'}
           </p>
         )}
       </div>
@@ -145,8 +145,13 @@ export default function ProjectDetails() {
 
       {gallery.length > 0 && (
         <div className="gallery-grid" aria-label="Galerie du projet">
-          {gallery.map((imageUrl) => (
-            <img key={imageUrl} src={imageUrl} alt="" loading="lazy" />
+          {gallery.map((imageUrl, index) => (
+            <img
+              key={imageUrl}
+              src={imageUrl}
+              alt={`Capture d'écran ${index + 1} du projet ${project?.title ?? ''}`}
+              loading="lazy"
+            />
           ))}
         </div>
       )}

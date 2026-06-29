@@ -22,24 +22,24 @@ function formatCount(count, singular, plural) {
 function buildHomeSections({ educationCount, projectsCount, skillsCount }) {
   return [
     {
-      title: 'Competences',
-      count: formatCount(skillsCount, 'competence publiee', 'competences publiees'),
+      title: 'Compétences',
+      count: formatCount(skillsCount, 'compétence publiée', 'compétences publiées'),
       description:
-        'Technologies, outils et domaines techniques que je developpe dans mon parcours.',
+        'Technologies, outils et domaines techniques que je développe dans mon parcours.',
       to: '/about',
     },
     {
       title: 'Projets',
       count: formatCount(projectsCount, 'projet disponible', 'projets disponibles'),
       description:
-        'Realisations pratiques en developpement, cybersecurite et intelligence artificielle.',
+        'Réalisations pratiques en développement, cybersécurité et intelligence artificielle.',
       to: '/projects',
     },
     {
-      title: 'Diplomes & Certificats',
-      count: formatCount(educationCount, 'diplome renseigne', 'diplomes renseignes'),
+      title: 'Diplômes & Certificats',
+      count: formatCount(educationCount, 'diplôme renseigné', 'diplômes renseignés'),
       description:
-        'Formations, diplomes et certifications qui structurent mon profil professionnel.',
+        'Formations, diplômes et certifications qui structurent mon profil professionnel.',
       to: '/credentials',
     },
   ];
@@ -65,7 +65,7 @@ function fileNameFromProfile(profile) {
 
 function listItems(items, renderItem) {
   if (!items.length) {
-    return '<p>Informations a renseigner depuis la plateforme.</p>';
+    return '<p>Informations à renseigner depuis la plateforme.</p>';
   }
 
   return `<ul>${items.map((item) => `<li>${renderItem(item)}</li>`).join('')}</ul>`;
@@ -264,7 +264,7 @@ function buildCvPdfHtml({ certifications, education, profile, projects, skills }
 <body>
   <div class="toolbar">
     <button onclick="window.print()">Enregistrer</button>
-    <span>Destination : Enregistrer au format PDF, fichier suggere : ${escapeHtml(fileName)}-portfolio.pdf</span>
+    <span>Destination : Enregistrer au format PDF, fichier suggéré : ${escapeHtml(fileName)}-portfolio.pdf</span>
   </div>
 
   <main class="cv-page">
@@ -272,7 +272,7 @@ function buildCvPdfHtml({ certifications, education, profile, projects, skills }
       <div class="photo">
         ${
           profile.avatar_url
-            ? `<img src="${escapeHtml(profile.avatar_url)}" alt="">`
+            ? `<img src="${escapeHtml(profile.avatar_url)}" alt="Photo de profil de ${escapeHtml(profile.name)}">`
             : `<span>${escapeHtml(
                 profile.name
                   .split(' ')
@@ -286,7 +286,7 @@ function buildCvPdfHtml({ certifications, education, profile, projects, skills }
       <h2>Contact</h2>
       ${listItems(contactItems, (item) => escapeHtml(item))}
 
-      <h2>Competences</h2>
+      <h2>Compétences</h2>
       ${Object.entries(skillGroups)
         .map(
           ([category, categorySkills]) => `
@@ -310,7 +310,7 @@ function buildCvPdfHtml({ certifications, education, profile, projects, skills }
       <h2>Parcours scolaire et universitaire</h2>
       <p>${escapeHtml(profile.education_summary)}</p>
 
-      <h2>Projets selectionnes</h2>
+      <h2>Projets sélectionnés</h2>
       ${listItems(
         mainProjects,
         (project) =>
@@ -319,7 +319,7 @@ function buildCvPdfHtml({ certifications, education, profile, projects, skills }
           )}</p></div>`,
       )}
 
-      <h2>Diplomes</h2>
+      <h2>Diplômes</h2>
       ${listItems(
         education,
         (item) =>
