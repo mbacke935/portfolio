@@ -28,6 +28,7 @@ import { deleteSkill, getSkills, saveSkill } from '../services/skillService.js';
 import {
   uploadCertificationImage,
   uploadProfilePhoto,
+  uploadProjectCoverImage,
 } from '../services/storageService.js';
 
 const emptyProfile = {
@@ -203,6 +204,8 @@ export default function Admin() {
   const [certificationForm, setCertificationForm] = useState(emptyCertification);
   const [certificationImageFile, setCertificationImageFile] = useState(null);
   const [certificationImagePreview, setCertificationImagePreview] = useState('');
+  const [projectCoverImageFile, setProjectCoverImageFile] = useState(null);
+  const [projectCoverImagePreview, setProjectCoverImagePreview] = useState('');
   const [activeAdminSection, setActiveAdminSection] = useState('profile');
   const [isContentLoading, setIsContentLoading] = useState(false);
   const [isContentSaving, setIsContentSaving] = useState(false);
@@ -496,11 +499,23 @@ export default function Admin() {
     setIsContentSaving(true);
 
     try {
+      let coverImageUrl = projectForm.cover_image;
+
+      if (projectCoverImageFile) {
+        coverImageUrl = await uploadProjectCoverImage(
+          projectCoverImageFile,
+          session.user.id,
+        );
+      }
+
       await saveProject({
         ...projectForm,
+        cover_image: coverImageUrl,
         full_description: buildProjectDescription(projectForm),
       });
       setProjectForm(emptyProject);
+      setProjectCoverImageFile(null);
+      setProjectCoverImagePreview('');
       await loadAdminContent();
       projectTitleInputRef.current?.focus();
       setStatus({
@@ -572,6 +587,30 @@ export default function Admin() {
     }
 
     setCertificationImagePreview(URL.createObjectURL(file));
+  }
+
+  function updateProjectCoverImage(event) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setStatus({
+        type: 'error',
+        message: "Choisis un fichier image pour l'image principale.",
+      });
+      return;
+    }
+
+    setProjectCoverImageFile(file);
+
+    if (projectCoverImagePreview?.startsWith('blob:')) {
+      URL.revokeObjectURL(projectCoverImagePreview);
+    }
+
+    setProjectCoverImagePreview(URL.createObjectURL(file));
   }
 
   async function handleSkillSubmit(event) {
@@ -1287,16 +1326,39 @@ export default function Admin() {
             />
           </label>
 
-          <label>
-            Image principale
-            <input
-              name="cover_image"
-              onChange={updateProjectField}
-              placeholder="https://..."
-              type="url"
-              value={projectForm.cover_image ?? ''}
-            />
-          </label>
+          <div className="form-grid__full photo-upload-field photo-upload-field--wide">
+            <div className="photo-preview photo-preview--wide" aria-label="Aperçu image principale">
+              {projectCoverImagePreview || projectForm.cover_image ? (
+                <img
+                  alt="Aperçu de l'image principale du projet"
+                  src={projectCoverImagePreview || projectForm.cover_image}
+                />
+              ) : (
+                <span>Aperçu</span>
+              )}
+            </div>
+            <div className="photo-upload-field__inputs">
+              <label>
+                Image locale (fichier)
+                <input
+                  accept="image/*"
+                  name="project_cover_image"
+                  onChange={updateProjectCoverImage}
+                  type="file"
+                />
+              </label>
+              <label>
+                URL de l'image
+                <input
+                  name="cover_image"
+                  onChange={updateProjectField}
+                  placeholder="https://..."
+                  type="url"
+                  value={projectForm.cover_image ?? ''}
+                />
+              </label>
+            </div>
+          </div>
 
           <label>
             Lien GitHub
@@ -1361,7 +1423,11 @@ export default function Admin() {
           {projectForm.id && (
             <button
               className="button button--secondary"
-              onClick={() => setProjectForm(emptyProject)}
+              onClick={() => {
+                setProjectForm(emptyProject);
+                setProjectCoverImageFile(null);
+                setProjectCoverImagePreview('');
+              }}
               type="button"
             >
               Annuler

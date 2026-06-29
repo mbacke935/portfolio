@@ -1950,6 +1950,16 @@ p {
   gap: 18px;
 }
 
+.photo-upload-field--wide {
+  grid-template-columns: 200px minmax(0, 1fr);
+  align-items: start;
+}
+
+.photo-upload-field__inputs {
+  display: grid;
+  gap: 12px;
+}
+
 .photo-preview {
   display: grid;
   width: 120px;
@@ -1961,6 +1971,11 @@ p {
   color: var(--color-navy);
   font-weight: 900;
   overflow: hidden;
+}
+
+.photo-preview--wide {
+  width: 200px;
+  aspect-ratio: 16 / 10;
 }
 
 .photo-preview img {
