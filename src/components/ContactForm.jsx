@@ -31,15 +31,13 @@ function validateContactForm(form) {
 function buildMailtoLink(adminEmail, form) {
   const subject = form.subject.trim() || `Message portfolio de ${form.name.trim()}`;
   const body = [
-    `Nom: ${form.name.trim()}`,
-    `Email: ${form.email.trim()}`,
+    `Nom : ${form.name.trim()}`,
+    `Email : ${form.email.trim()}`,
     '',
     form.message.trim(),
   ].join('\n');
 
-  return `mailto:${adminEmail}?subject=${encodeURIComponent(
-    subject,
-  )}&body=${encodeURIComponent(body)}`;
+  return `mailto:${adminEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 export default function ContactForm({ adminEmail }) {
@@ -58,22 +56,10 @@ export default function ContactForm({ adminEmail }) {
     event.preventDefault();
     setStatus({ type: 'idle', message: '' });
 
-    if (!adminEmail) {
-      setStatus({
-        type: 'error',
-        message: "L'email de contact n'est pas encore configuré. Revenez plus tard.",
-      });
-      return;
-    }
-
     const nextErrors = validateContactForm(form);
-
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
-      setStatus({
-        type: 'error',
-        message: 'Corrigez les champs indiqués avant envoi.',
-      });
+      setStatus({ type: 'error', message: 'Corrigez les champs indiqués avant envoi.' });
       return;
     }
 
@@ -81,25 +67,44 @@ export default function ContactForm({ adminEmail }) {
 
     try {
       if (isSupabaseConfigured) {
-        try {
-          await submitContactMessage(form);
-        } catch (error) {
-          // L'email reste prioritaire : Supabase sert d'historique secondaire.
-        }
+        await submitContactMessage(form);
+        setForm(initialForm);
+        setStatus({
+          type: 'success',
+          message: 'Message envoyé ! Je vous répondrai dans les meilleurs délais.',
+        });
+        return;
       }
 
-      window.location.href = buildMailtoLink(adminEmail, form);
-      setForm(initialForm);
-      setStatus({
-        type: 'success',
-        message: "Message préparé. Votre client email devrait s'ouvrir avec le contenu pré-rempli.",
-      });
-    } catch (error) {
+      // Fallback mailto si Supabase non configuré
+      if (adminEmail) {
+        window.open(buildMailtoLink(adminEmail, form), '_blank');
+        setForm(initialForm);
+        setStatus({
+          type: 'success',
+          message: "Votre client email s'est ouvert avec le message pré-rempli.",
+        });
+        return;
+      }
+
       setStatus({
         type: 'error',
-        message:
-          "L'envoi a échoué. Vérifiez l'email admin et la configuration Supabase.",
+        message: "Le formulaire n'est pas encore configuré. Contactez-moi directement par email.",
       });
+    } catch (error) {
+      if (adminEmail) {
+        window.open(buildMailtoLink(adminEmail, form), '_blank');
+        setForm(initialForm);
+        setStatus({
+          type: 'success',
+          message: "Message préparé dans votre client email.",
+        });
+      } else {
+        setStatus({
+          type: 'error',
+          message: "L'envoi a échoué. Réessayez ou contactez-moi directement par email.",
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -150,7 +155,7 @@ export default function ContactForm({ adminEmail }) {
       <label>
         Sujet
         <input
-          autoComplete="off"
+          autoComplete="on"
           name="subject"
           onChange={updateField}
           placeholder="Sujet du message"
@@ -185,7 +190,7 @@ export default function ContactForm({ adminEmail }) {
       )}
 
       <button className="button button--primary" disabled={isSubmitting} type="submit">
-        {isSubmitting ? 'Envoi...' : 'Envoyer'}
+        {isSubmitting ? 'Envoi en cours...' : 'Envoyer'}
       </button>
     </form>
   );
